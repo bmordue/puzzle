@@ -163,11 +163,21 @@ function svgGrid(grid: Grid, rows: number, cols: number) {
             // Draw the square
             svg += `\n<rect x="${x}" y="${y}" width="${CELL_SIZE}" height="${CELL_SIZE}" stroke="${STROKE_COLOR}" stroke-width="${STROKE_WIDTH}" fill="white" />`;
 
-            // Draw the arrow
-            svg += svgArrow(CELL_SIZE, direction, centerX, y, x, centerY);
 
-            // Draw the number
-            svg += `\n<text x="${centerX}" y="${centerY}" font-size="${FONT_SIZE}" font-family="${FONT_FAMILY}" text-anchor="middle" alignment-baseline="central" stroke="black" fill="black">${number}</text>`;
+            if (direction === Direction.NONE || number === 0) {
+                // Draw the goal
+                svg += `\n<circle cx="${centerX}" cy="${centerY}" r="${CELL_SIZE * 0.2}" stroke-width="3" stroke="red" fill="none" />`;
+
+            } else {
+
+                // Draw the arrow
+                svg += svgArrow(CELL_SIZE, direction, centerX, y, x, centerY);
+
+                // Draw the number
+                svg += `\n<text x="${centerX}" y="${centerY}" font-size="${FONT_SIZE}" font-family="${FONT_FAMILY}" text-anchor="middle" alignment-baseline="central" stroke="black" fill="black">${number}</text>`;
+
+            }
+
         }
         svg += '\n';
     }
