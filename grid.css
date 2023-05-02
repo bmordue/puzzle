@@ -6,16 +6,16 @@
   
 .arrow {
   fill: lightgrey;
-  stroke: darkslategrey;
+  stroke: red;
   stroke-width: 2;
 }  
 
 .number {
-  font-size: 36;
+  font-size: small
   font-family: sans-serif;
   text-anchor: middle;
   fill: lightgrey;
-  stroke: darkgrey;
+  stroke: red;
   stroke-width: 3;
 }
   
