@@ -1,45 +1,21 @@
 .square {
-    stroke: blue;
-    stroke-width: 2;
-    fill: lightgray;
+  stroke: black;
+  stroke-width: 2;
+  fill: lightgray;
   }
   
-  .arrow {
-    fill: red;
-    stroke: blue;
-    stroke-width: 2;
-  }  
-  .arrow-up {
-    fill: red;
-    stroke: blue;
-    stroke-width: 2;
-  }
-  
-  .arrow-down {
-    fill: red;
-    stroke: blue;
-    stroke-width: 2;
-  }
-  
-  .arrow-left {
-    fill: red;
-    stroke: blue;
-    stroke-width: 2;
-  }
-  
-  .arrow-right {
-    fill: red;
-    stroke: blue;
-    stroke-width: 2;
-  }
-  
-  .number {
-    font-size: 24;
-    font-family: sans-serif;
-    text-anchor: middle;
-    alignment-baseline: central;
-    fill: blue;
-    stroke: red;
-    stroke-width: 2;
-  }
+.arrow {
+  fill: lightgrey;
+  stroke: darkslategrey;
+  stroke-width: 2;
+}  
+
+.number {
+  font-size: 36;
+  font-family: sans-serif;
+  text-anchor: middle;
+  fill: lightgrey;
+  stroke: darkgrey;
+  stroke-width: 3;
+}
   
