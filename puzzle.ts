@@ -209,4 +209,34 @@ function svgArrow(cellSize: number, direction: Direction, centerX: number, y: nu
     return arrowSvg;
 }
 
-console.log(svgGrid(bigExampleGrid(), 7, 7));
+// console.log(svgGrid(bigExampleGrid(), 7, 7));
+const grid = bigExampleGrid();
+const square = grid.getSquare(1, 6);
+console.log(`${square.direction} ${square.number}`);
+
+function testOne() {
+    let passed = true;
+
+    const grid = new Grid(2, 2);
+    grid.setDirection(0, 1, Direction.DOWN);
+    grid.setNumber(1, 0, 2);
+
+    passed = passed && grid.getSquare(0, 0).number === 0;
+    passed = passed && grid.getSquare(0, 0).direction === Direction.NONE;
+    passed = passed && grid.getSquare(0, 1).number === 0;
+    passed = passed && grid.getSquare(0, 1).direction === Direction.DOWN;
+    passed = passed && grid.getSquare(1, 0).number === 2;
+    passed = passed && grid.getSquare(1, 0).direction === Direction.NONE;
+    passed = passed && grid.getSquare(1, 1).number === 0;
+    passed = passed && grid.getSquare(1, 1).direction === Direction.NONE;
+
+    console.log(grid.toString());
+
+    if (!passed) {
+        throw new Error("test failed");
+    } else {
+        console.log("Test passed");
+    }
+}
+
+testOne();
