@@ -1,0 +1,45 @@
+.square {
+    stroke: blue;
+    stroke-width: 2;
+    fill: lightgray;
+  }
+  
+  .arrow {
+    fill: red;
+    stroke: blue;
+    stroke-width: 2;
+  }  
+  .arrow-up {
+    fill: red;
+    stroke: blue;
+    stroke-width: 2;
+  }
+  
+  .arrow-down {
+    fill: red;
+    stroke: blue;
+    stroke-width: 2;
+  }
+  
+  .arrow-left {
+    fill: red;
+    stroke: blue;
+    stroke-width: 2;
+  }
+  
+  .arrow-right {
+    fill: red;
+    stroke: blue;
+    stroke-width: 2;
+  }
+  
+  .number {
+    font-size: 24;
+    font-family: sans-serif;
+    text-anchor: middle;
+    alignment-baseline: central;
+    fill: blue;
+    stroke: red;
+    stroke-width: 2;
+  }
+  

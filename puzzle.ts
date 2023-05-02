@@ -84,7 +84,10 @@ function svgGrid() {
     const FONT_SIZE = 24;
     const FONT_FAMILY = "sans-serif";
     // SVG elements
-    let svg = `<svg viewBox="0 0 ${COLS * CELL_SIZE} ${ROWS * CELL_SIZE}" xmlns="http://www.w3.org/2000/svg">`;
+    let svg = `<svg viewBox="0 0 ${COLS * CELL_SIZE} ${ROWS * CELL_SIZE}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+    <link rel="stylesheet" href="grid.css" />
+    </defs>`;
     for (let row = 0; row < ROWS; row++) {
         for (let col = 0; col < COLS; col++) {
             const { direction, number } = grid.getSquare(row, col);
@@ -96,25 +99,24 @@ function svgGrid() {
             // Draw the square
             svg += `<rect x="${x}" y="${y}" width="${CELL_SIZE}" height="${CELL_SIZE}" stroke="${STROKE_COLOR}" stroke-width="${STROKE_WIDTH}" fill="none" />`;
 
-            // Draw the number
-            svg += `<text x="${centerX}" y="${centerY}" font-size="${FONT_SIZE}" font-family="${FONT_FAMILY}" text-anchor="middle" alignment-baseline="central">${number}</text>`;
-
             // Draw the arrow
             const arrowSize = CELL_SIZE / 4;
             switch (direction) {
                 case Direction.UP:
-                    svg += `<polygon points="${centerX},${y + arrowSize} ${x + arrowSize},${y + CELL_SIZE - arrowSize} ${x + CELL_SIZE - arrowSize},${y + CELL_SIZE - arrowSize}" fill="${STROKE_COLOR}" />`;
+                    svg += `<polygon points="${centerX},${y + arrowSize} ${x + arrowSize},${y + CELL_SIZE - arrowSize} ${x + CELL_SIZE - arrowSize},${y + CELL_SIZE - arrowSize}" class="arrow" />`;
                     break;
                 case Direction.DOWN:
-                    svg += `<polygon points="${centerX},${y + CELL_SIZE - arrowSize} ${x + arrowSize},${y + arrowSize} ${x + CELL_SIZE - arrowSize},${y + arrowSize}" fill="${STROKE_COLOR}" />`;
+                    svg += `<polygon points="${centerX},${y + CELL_SIZE - arrowSize} ${x + arrowSize},${y + arrowSize} ${x + CELL_SIZE - arrowSize},${y + arrowSize}" class="arrow" />`;
                     break;
                 case Direction.LEFT:
-                    svg += `<polygon points="${x + arrowSize},${centerY} ${x + CELL_SIZE - arrowSize},${y + arrowSize} ${x + CELL_SIZE - arrowSize},${y + CELL_SIZE - arrowSize}" fill="${STROKE_COLOR}" />`;
+                    svg += `<polygon points="${x + arrowSize},${centerY} ${x + CELL_SIZE - arrowSize},${y + arrowSize} ${x + CELL_SIZE - arrowSize},${y + CELL_SIZE - arrowSize}" class="arrow" />`;
                     break;
                 case Direction.RIGHT:
-                    svg += `<polygon points="${x + CELL_SIZE - arrowSize},${centerY} ${x + arrowSize},${y + arrowSize} ${x + arrowSize},${y + CELL_SIZE - arrowSize}" fill="${STROKE_COLOR}" />`;
+                    svg += `<polygon points="${x + CELL_SIZE - arrowSize},${centerY} ${x + arrowSize},${y + arrowSize} ${x + arrowSize},${y + CELL_SIZE - arrowSize}" class="arrow" />`;
                     break;
             }
+            // Draw the number
+            svg += `<text x="${centerX}" y="${centerY}" font-size="${FONT_SIZE}" font-family="${FONT_FAMILY}" text-anchor="middle" alignment-baseline="central">${number}</text>`;
         }
     }
     svg += "</svg>";
