@@ -210,9 +210,24 @@ function svgArrow(cellSize: number, direction: Direction, centerX: number, y: nu
 }
 
 // console.log(svgGrid(bigExampleGrid(), 7, 7));
-const grid = bigExampleGrid();
-const square = grid.getSquare(1, 6);
-console.log(`${square.direction} ${square.number}`);
+function testTwo() {
+    const grid = bigExampleGrid();
+    const square = grid.getSquare(1, 6);
+
+    let passed = true;
+
+    console.log(`${square.direction} ${square.number}`);
+
+    passed = passed && square.direction === Direction.LEFT;
+    passed = passed && square.number === 4;
+
+
+    if (!passed) {
+        throw new Error("test failed");
+    } else {
+        console.log("Test passed");
+    }
+}
 
 function testOne() {
     let passed = true;
@@ -239,4 +254,4 @@ function testOne() {
     }
 }
 
-testOne();
+testTwo();
