@@ -1,3 +1,5 @@
+import { readFileSync } from "fs";
+
 enum Direction {
     UP = "up",
     DOWN = "down",
@@ -31,12 +33,22 @@ class Grid {
         }
     }
 
+    static clone(old: Grid) {
+        let clone = new Grid(old.rows, old.columns);
+        for (let i = 0; i < old.rows; i++) {
+            for (let j = 0; j < old.columns; j++) {
+                clone.setDirection(i, j, old.grid[i][j].direction);
+                clone.setNumber(i, j, old.grid[i][j].number);
+            }
+        }
+        return clone;
+    }
+
 
     public setDirection(row: number, column: number, direction: Direction): void {
         const square = this.grid[row][column];
 
         square.direction = direction;
-        // this.grid[row][column].direction = direction;
     }
 
     public setNumber(row: number, column: number, number: number): void {
@@ -93,22 +105,6 @@ function gridFromRaw(numbers: number[], directions: string[], rows: number, cols
     return grid;
 }
 
-function gridFromRawRows(numbers: number[], directions: string, rows: number, cols: number) {
-    const grid = new Grid(rows, cols);
-
-    const directionsLines = directions.split('\n');
-
-    for (let i = 0; i < rows; i++) {
-        const row = directionsLines[i];
-        for (let j = 0; j < cols; j++) {
-            const dirChar = directions.charAt(j);
-            grid.setDirection(i, j, dirForShort(dirChar));
-            grid.setNumber(i, j, numbers[i * rows + j]);
-        }
-    }
-    return grid;
-}
-
 function exampleGrid() {
     return gridFromRaw(
         [1, 2, 1, 3, 2, 3, 2, 3, 1],
@@ -117,28 +113,9 @@ function exampleGrid() {
         3);
 }
 
-function bigExampleGrid() {
-    return gridFromRawRows(
-        [1, 2, 1, 1, 2, 2, 3,
-            3, 2, 3, 1, 2, 1, 4,
-            2, 3, 1, 1, 0, 2, 1,
-            4, 1, 2, 2, 2, 2, 3,
-            1, 2, 2, 1, 4, 1, 2,
-            2, 2, 3, 3, 2, 3, 1,
-            3, 1, 1, 2, 2, 3, 2
-        ],
-        `rrldrdr
-        rrdrdul
-        rrdlurl
-        rrrudul
-        ruluull
-        rdrurul
-        uuuuuul
-        `,
-        7,
-        7);
+function gridFromFile(path: string) {
+    return Grid.clone(JSON.parse(readFileSync(path, "utf8")));
 }
-
 
 function svgGrid(grid: Grid, rows: number, cols: number) {
 
@@ -209,7 +186,6 @@ function svgArrow(cellSize: number, direction: Direction, centerX: number, y: nu
     return arrowSvg;
 }
 
-// console.log(svgGrid(bigExampleGrid(), 7, 7));
 function testTwo() {
     const grid = bigExampleGrid();
     const square = grid.getSquare(1, 6);
@@ -254,4 +230,4 @@ function testOne() {
     }
 }
 
-testTwo();
+console.log(svgGrid(gridFromFile("example_7x7.json"), 7, 7));

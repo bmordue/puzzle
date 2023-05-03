@@ -1,0 +1,216 @@
+{
+    "rows": 7,
+    "columns": 7,
+    "grid": [
+        [
+            {
+                "direction": "right",
+                "number": 1
+            },
+            {
+                "direction": "right",
+                "number": 2
+            },
+            {
+                "direction": "left",
+                "number": 1
+            },
+            {
+                "direction": "down",
+                "number": 1
+            },
+            {
+                "direction": "right",
+                "number": 2
+            },
+            {
+                "direction": "down",
+                "number": 2
+            },
+            {
+                "direction": "right",
+                "number": 3
+            }
+        ],
+        [
+            {
+                "direction": "right",
+                "number": 3
+            },
+            {
+                "direction": "right",
+                "number": 2
+            },
+            {
+                "direction": "down",
+                "number": 3
+            },
+            {
+                "direction": "right",
+                "number": 1
+            },
+            {
+                "direction": "down",
+                "number": 2
+            },
+            {
+                "direction": "up",
+                "number": 1
+            },
+            {
+                "direction": "left",
+                "number": 4
+            }
+        ],
+        [
+            {
+                "direction": "right",
+                "number": 2
+            },
+            {
+                "direction": "right",
+                "number": 3
+            },
+            {
+                "direction": "down",
+                "number": 1
+            },
+            {
+                "direction": "left",
+                "number": 1
+            },
+            {
+                "direction": "up",
+                "number": 0
+            },
+            {
+                "direction": "right",
+                "number": 2
+            },
+            {
+                "direction": "left",
+                "number": 1
+            }
+        ],
+        [
+            {
+                "direction": "right",
+                "number": 4
+            },
+            {
+                "direction": "right",
+                "number": 1
+            },
+            {
+                "direction": "right",
+                "number": 2
+            },
+            {
+                "direction": "up",
+                "number": 2
+            },
+            {
+                "direction": "down",
+                "number": 2
+            },
+            {
+                "direction": "up",
+                "number": 2
+            },
+            {
+                "direction": "left",
+                "number": 3
+            }
+        ],
+        [
+            {
+                "direction": "right",
+                "number": 1
+            },
+            {
+                "direction": "up",
+                "number": 2
+            },
+            {
+                "direction": "left",
+                "number": 2
+            },
+            {
+                "direction": "up",
+                "number": 1
+            },
+            {
+                "direction": "up",
+                "number": 4
+            },
+            {
+                "direction": "left",
+                "number": 1
+            },
+            {
+                "direction": "left",
+                "number": 2
+            }
+        ],
+        [
+            {
+                "direction": "right",
+                "number": 2
+            },
+            {
+                "direction": "down",
+                "number": 2
+            },
+            {
+                "direction": "right",
+                "number": 3
+            },
+            {
+                "direction": "up",
+                "number": 3
+            },
+            {
+                "direction": "right",
+                "number": 2
+            },
+            {
+                "direction": "up",
+                "number": 3
+            },
+            {
+                "direction": "left",
+                "number": 1
+            }
+        ],
+        [
+            {
+                "direction": "up",
+                "number": 3
+            },
+            {
+                "direction": "up",
+                "number": 1
+            },
+            {
+                "direction": "up",
+                "number": 1
+            },
+            {
+                "direction": "up",
+                "number": 2
+            },
+            {
+                "direction": "up",
+                "number": 2
+            },
+            {
+                "direction": "up",
+                "number": 3
+            },
+            {
+                "direction": "left",
+                "number": 2
+            }
+        ]
+    ]
+}
