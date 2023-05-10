@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 
-enum Direction {
+export enum Direction {
     UP = "up",
     DOWN = "down",
     LEFT = "left",
@@ -8,12 +8,12 @@ enum Direction {
     NONE = "none"
 }
 
-interface GridSquare {
+export interface GridSquare {
     direction: Direction;
     number: number;
 }
 
-class Grid {
+export class Grid {
     private grid: GridSquare[][];
     private rows: number;
     private columns: number;
@@ -117,7 +117,7 @@ function gridFromFile(path: string) {
     return Grid.clone(JSON.parse(readFileSync(path, "utf8")));
 }
 
-function svgGrid(grid: Grid, rows: number, cols: number) {
+export function svgGrid(grid: Grid, rows: number, cols: number) {
 
     // SVG parameters
     const CELL_SIZE = 50;
@@ -230,4 +230,4 @@ function testOne() {
     }
 }
 
-console.log(svgGrid(gridFromFile("example_7x7.json"), 7, 7));
+// console.log(svgGrid(gridFromFile("example_7x7.json"), 7, 7));
