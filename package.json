@@ -2,6 +2,9 @@
   "name": "puzzle",
   "version": "1.0.0",
   "description": "",
+  "engines": {
+    "node": ">=18.0.0 <19.0.0"
+  },
   "scripts": {
     "prestart": "npx tsc",
     "start": "node built/puzzle.js"
