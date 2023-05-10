@@ -231,3 +231,22 @@ function testOne() {
 }
 
 // console.log(svgGrid(gridFromFile("example_7x7.json"), 7, 7));
+
+function rnd(max) {
+
+    return Math.floor(Math.random() * max) + 1;
+}
+
+function generate(rows :number, columns :number) {
+    let grid = new Grid(rows, columns);
+    
+
+    const goalX = Math.floor(Math.random() * rows) + 1;
+
+
+    const goalY = Math.floor(Math.random() * columns) + 1;
+    
+    const startX = rnd(rows);
+    const startY = rnd(columns);
+
+}
