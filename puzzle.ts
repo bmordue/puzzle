@@ -282,15 +282,35 @@ function generate(rows: number, columns: number) {
 
 }
 
-function testGenerate() {
+function testStartSquares() {
+    console.log("testStartSquares");
+    const expected = [
+        { x: 0, y: 0 },
+        { x: 1, y: 0 },
+        { x: 2, y: 0 },
+        { x: 2, y: 1 },
+        { x: 2, y: 2 },
+        { x: 2, y: 3 },
+        { x: 2, y: 4 },
+        { x: 1, y: 4 },
+        { x: 0, y: 4 },
+        { x: 0, y: 3 },
+        { x: 0, y: 2 },
+        { x: 0, y: 1 },
+    ];
+
     const rows = 5;
     const cols = 3;
     for (let i = 0; i < 12; i++) {
         const s = startPoint(rows, cols, i);
-        console.log(`${i}: ${s.x}, ${s.y}`);
+        if (s.x !== expected[i].x || s.y !== expected[i].y) {
+            console.log(`${i}: ${s.x}, ${s.y}`);
+            console.log("test failed");
+        }
     }
+    console.log("end test");
 }
 
-testGenerate();
+testStartSquares();
 
 //generate(7, 7);
