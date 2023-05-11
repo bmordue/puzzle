@@ -1,5 +1,4 @@
-import { count } from "console";
-import { readFileSync } from "fs";
+import { readFileSync, writeFileSync } from "fs";
 
 export enum Direction {
     UP = "up",
@@ -12,12 +11,13 @@ export enum Direction {
 export interface GridSquare {
     direction: Direction;
     number: number;
+    decorators?: string;
 }
 
 export class Grid {
     private grid: GridSquare[][];
-    private rows: number;
-    private columns: number;
+    rows: number;
+    columns: number;
 
     constructor(rows: number, columns: number) {
         this.rows = rows;
@@ -28,7 +28,7 @@ export class Grid {
             for (let j = 0; j < columns; j++) {
                 this.grid[i].push({
                     direction: Direction.NONE,
-                    number: 0
+                    number: 1
                 });
             }
         }
@@ -54,6 +54,15 @@ export class Grid {
 
     public setNumber(row: number, column: number, number: number): void {
         this.grid[row][column].number = number;
+    }
+
+    addDecorator(row: number, column: number, decorator: string) {
+        const dec = this.grid[row][column].decorators;
+        if (dec) {
+            this.grid[row][column].decorators += decorator;
+        } else {
+            this.grid[row][column].decorators = decorator;
+        }
     }
 
     public getSquare(row: number, column: number): GridSquare {
@@ -142,10 +151,13 @@ export function svgGrid(grid: Grid, rows: number, cols: number) {
             svg += `\n<rect x="${x}" y="${y}" width="${CELL_SIZE}" height="${CELL_SIZE}" stroke="${STROKE_COLOR}" stroke-width="${STROKE_WIDTH}" fill="white" />`;
 
 
-            if (direction === Direction.NONE || number === 0) {
+            if (direction === Direction.NONE && number === 0) {
                 // Draw the goal
                 svg += `\n<circle cx="${centerX}" cy="${centerY}" r="${CELL_SIZE * 0.2}" stroke-width="3" stroke="red" fill="none" />`;
 
+            } else if (direction === Direction.NONE && number === 1) {
+                // draw an uninitialised square
+                svg += `\n<circle cx="${centerX}" cy="${centerY}" r="${CELL_SIZE * 0.2}" stroke-width="2" stroke="black" fill="none" />`;
             } else {
 
                 // Draw the arrow
@@ -154,6 +166,12 @@ export function svgGrid(grid: Grid, rows: number, cols: number) {
                 // Draw the number
                 svg += `\n<text x="${centerX}" y="${centerY}" font-size="${FONT_SIZE}" font-family="${FONT_FAMILY}" text-anchor="middle" alignment-baseline="central" stroke="black" fill="black">${number}</text>`;
 
+            }
+
+            // debug decorators
+            const decorators = grid.getSquare(row, col).decorators;
+            if (decorators?.includes('s')) {
+                svg += `\n<rect x="${x + 5}" y="${y + 5}" width="5" height="5" stroke="${STROKE_COLOR}" stroke-width="${STROKE_WIDTH}" fill="red" />`;
             }
 
         }
@@ -270,16 +288,148 @@ function startPoint(rows: number, columns: number, index: number) {
     return { x, y };
 }
 
+function randomDirection(): Direction {
+    const values = Object.values(Direction);
+    // don't choose Direction.NONE!
+    return values[rnd(4) + 1];
+}
+
+// TODO make this a method of the Grid class
+function distanceToEdge(theGrid: Grid, startX: number, startY: number, dir: Direction) {
+    let distance = 0;
+
+    switch (dir) {
+        case Direction.DOWN:
+            distance = theGrid.rows - 1 - startY;
+            break;
+        case Direction.UP:
+            distance = startY;
+            break;
+        case Direction.RIGHT:
+            distance = theGrid.columns - 1 - startX;
+            break;
+        case Direction.LEFT:
+            distance = startX;
+            break;
+    }
+
+    return distance;
+}
+
+function applySteps(x: number, y: number, dir: Direction, steps: number) {
+    let newX = x;
+    let newY = y;
+    switch (dir) {
+        case Direction.DOWN:
+            newY = y + steps;
+            break;
+        case Direction.UP:
+            newY = y - steps;
+            break;
+        case Direction.RIGHT:
+            newX = x + steps;
+            break;
+        case Direction.LEFT:
+            newX = x - steps;
+            break;
+    }
+    return { x: newX, y: newY };
+}
+
 function generate(rows: number, columns: number) {
     let grid = new Grid(rows, columns);
 
+    // pick a goal square
     const goalX = rnd(columns - 2) + 1; // not on edge
     const goalY = rnd(rows - 2) + 1; // not on edge
+    grid.setNumber(goalX, goalY, 0);
 
+    // aim for a rough path length, but not guaranteed
+    const pathLength = rows * columns / (2 * (rows + columns - 2));
+    console.log(`Grid size ${rows}x${columns}; target path length: ${pathLength}`);
+
+    // pick a winning start square and path to goal
     const { x, y } = startPoint(rows, columns, rnd(countEdgeSquares(rows, columns)));
 
-    console.log(`start: ${x}, ${y}; goal: ${goalX}, ${goalY}`);
+    console.log(`goal: ${goalX},${goalY}; start: ${x},${y}`);
 
+    let paths = 0;
+    let currX = x!;
+    let currY = y!;
+    grid.addDecorator(currX, currY, 's'); // decorator for starting square
+
+    // TODO: move this out into its own function
+    // jump around randomly a few times
+    while (paths < 4) {
+        // if (blankSquares > 0)
+        let dir = Direction.NONE;
+        let steps = 0;
+
+        let badLoop = true;
+        let attempts = 0;
+        while (badLoop && attempts < 10) {
+            dir = randomDirection();
+            steps = rnd(distanceToEdge(grid, x!, y!, dir) - 1) + 1; //+ 1; // + 1: allow exits from grid
+            console.log(`candidate step: ${steps} ${dir}`);
+            const candidate = applySteps(currX, currY, dir, steps);
+            console.log(`candidate destination: ${candidate.x}, ${candidate.y}`);
+            console.log(`grid square: ${JSON.stringify(grid.getSquare(candidate.x, candidate.y))}`);
+            if (grid.getSquare(candidate.x, candidate.y).direction === Direction.NONE) {
+                badLoop = false;
+            }
+            attempts++;
+        }
+
+        console.log(`Found a step: ${steps} ${dir}`);
+
+        grid.setDirection(currX, currY, dir);
+        grid.setNumber(currX, currY, steps);
+
+        const next = applySteps(currX, currY, dir, steps);
+        currX = next.x;
+        currY = next.y;
+
+        if (currX === goalX && currY === goalY) {
+            console.log("reached goal");
+            paths = 4;
+            break;
+        }
+
+        if (currX === rows || currX < 0 || currY === columns || currY < 0) {
+            // exited grid
+            console.log(`Exited grid: ${currX},${currY}`);
+            paths = 4;
+            break;
+        }
+
+        paths++;
+    }
+
+    // complete the winning path to the goal
+    const offsetX = goalX - currX;
+    const offsetY = goalY - currY;
+
+    if (offsetX == 0) {
+        grid.setDirection(currX, currY, offsetY > 0 ? Direction.DOWN : Direction.UP);
+        grid.setNumber(currX, currY, Math.abs(offsetY));
+    } else if (offsetY == 0) {
+        grid.setDirection(currX, currY, offsetX > 0 ? Direction.RIGHT : Direction.LEFT);
+        grid.setNumber(currX, currY, Math.abs(offsetX));
+    } else { // two moves required
+        const yDir = offsetY > 0 ? Direction.DOWN : Direction.UP;
+        grid.setDirection(currX, currY, yDir);
+        grid.setNumber(currX, currY, Math.abs(offsetY));
+
+        const next = applySteps(currX, currY, yDir, Math.abs(offsetY));
+        grid.setDirection(next.x, next.y, offsetX > 0 ? Direction.RIGHT : Direction.LEFT);
+        grid.setNumber(next.x, next.y, Math.abs(offsetX));
+    }
+
+    // complete the non-winning paths from edge back to edge (or loop?!)
+
+    // fill in any remaining (unreachable) blank grid squares 
+
+    return grid;
 }
 
 function testStartSquares() {
@@ -311,6 +461,6 @@ function testStartSquares() {
     console.log("end test");
 }
 
-testStartSquares();
+//testStartSquares();
 
-//generate(7, 7);
+writeFileSync("newgrid.svg", (svgGrid(generate(5, 5), 5, 5)));
