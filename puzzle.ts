@@ -150,6 +150,8 @@ export function svgGrid(grid: Grid, rows: number, cols: number) {
             // Draw the square
             svg += `\n<rect x="${x}" y="${y}" width="${CELL_SIZE}" height="${CELL_SIZE}" stroke="${STROKE_COLOR}" stroke-width="${STROKE_WIDTH}" fill="white" />`;
 
+            // add coords
+            svg += `\n<text x="${centerX + CELL_SIZE / 4}" y="${centerY + CELL_SIZE / 3}" font-size="10" font-family="${FONT_FAMILY}" text-anchor="middle" alignment-baseline="central" stroke="black" fill="black">${row}, ${col}</text>`;
 
             if (direction === Direction.NONE && number === 0) {
                 // Draw the goal
@@ -165,7 +167,6 @@ export function svgGrid(grid: Grid, rows: number, cols: number) {
 
                 // Draw the number
                 svg += `\n<text x="${centerX}" y="${centerY}" font-size="${FONT_SIZE}" font-family="${FONT_FAMILY}" text-anchor="middle" alignment-baseline="central" stroke="black" fill="black">${number}</text>`;
-
             }
 
             // debug decorators
@@ -285,7 +286,7 @@ function startPoint(rows: number, columns: number, index: number) {
         y = 2 * columns + 2 * rows - 4 - index;
     }
 
-    return { x, y };
+    return { row: x, col: y };
 }
 
 function randomDirection(): Direction {
@@ -316,47 +317,47 @@ function distanceToEdge(theGrid: Grid, startX: number, startY: number, dir: Dire
     return distance;
 }
 
-function applySteps(x: number, y: number, dir: Direction, steps: number) {
-    let newX = x;
-    let newY = y;
+function applySteps(row: number, col: number, dir: Direction, steps: number) {
+    let newRow = row;
+    let newCol = col;
     switch (dir) {
         case Direction.DOWN:
-            newY = y + steps;
+            newCol = col + steps;
             break;
         case Direction.UP:
-            newY = y - steps;
+            newCol = col - steps;
             break;
         case Direction.RIGHT:
-            newX = x + steps;
+            newRow = row + steps;
             break;
         case Direction.LEFT:
-            newX = x - steps;
+            newRow = row - steps;
             break;
     }
-    return { x: newX, y: newY };
+    return { row: newRow, col: newCol };
 }
 
 function generate(rows: number, columns: number) {
     let grid = new Grid(rows, columns);
 
     // pick a goal square
-    const goalX = rnd(columns - 2) + 1; // not on edge
-    const goalY = rnd(rows - 2) + 1; // not on edge
-    grid.setNumber(goalX, goalY, 0);
+    const goalRow = rnd(columns - 2) + 1; // not on edge
+    const goalCol = rnd(rows - 2) + 1; // not on edge
+    grid.setNumber(goalRow, goalCol, 0);
 
     // aim for a rough path length, but not guaranteed
     const pathLength = rows * columns / (2 * (rows + columns - 2));
     console.log(`Grid size ${rows}x${columns}; target path length: ${pathLength}`);
 
     // pick a winning start square and path to goal
-    const { x, y } = startPoint(rows, columns, rnd(countEdgeSquares(rows, columns)));
+    const { row, col } = startPoint(rows, columns, rnd(countEdgeSquares(rows, columns)));
 
-    console.log(`goal: ${goalX},${goalY}; start: ${x},${y}`);
+    console.log(`goal: ${goalRow},${goalCol}; start: ${row},${col}`);
 
     let paths = 0;
-    let currX = x!;
-    let currY = y!;
-    grid.addDecorator(currX, currY, 's'); // decorator for starting square
+    let currRow = row!;
+    let currCol = col!;
+    grid.addDecorator(currRow, currCol, 's'); // decorator for starting square
 
     // TODO: move this out into its own function
     // jump around randomly a few times
@@ -369,12 +370,12 @@ function generate(rows: number, columns: number) {
         let attempts = 0;
         while (badLoop && attempts < 10) {
             dir = randomDirection();
-            steps = rnd(distanceToEdge(grid, x!, y!, dir) - 1) + 1; //+ 1; // + 1: allow exits from grid
+            steps = rnd(distanceToEdge(grid, row!, col!, dir) - 1) + 1; //+ 1; // + 1: allow exits from grid
             console.log(`candidate step: ${steps} ${dir}`);
-            const candidate = applySteps(currX, currY, dir, steps);
-            console.log(`candidate destination: ${candidate.x}, ${candidate.y}`);
-            console.log(`grid square: ${JSON.stringify(grid.getSquare(candidate.x, candidate.y))}`);
-            if (grid.getSquare(candidate.x, candidate.y).direction === Direction.NONE) {
+            const candidate = applySteps(currRow, currCol, dir, steps);
+            console.log(`candidate destination: ${candidate.row}, ${candidate.col}`);
+            console.log(`grid square: ${JSON.stringify(grid.getSquare(candidate.row, candidate.col))}`);
+            if (grid.getSquare(candidate.row, candidate.col).direction === Direction.NONE) {
                 badLoop = false;
             }
             attempts++;
@@ -382,22 +383,22 @@ function generate(rows: number, columns: number) {
 
         console.log(`Found a step: ${steps} ${dir}`);
 
-        grid.setDirection(currX, currY, dir);
-        grid.setNumber(currX, currY, steps);
+        grid.setDirection(currRow, currCol, dir);
+        grid.setNumber(currRow, currCol, steps);
 
-        const next = applySteps(currX, currY, dir, steps);
-        currX = next.x;
-        currY = next.y;
+        const next = applySteps(currRow, currCol, dir, steps);
+        currRow = next.row;
+        currCol = next.col;
 
-        if (currX === goalX && currY === goalY) {
+        if (currRow === goalRow && currCol === goalCol) {
             console.log("reached goal");
             paths = 4;
             break;
         }
 
-        if (currX === rows || currX < 0 || currY === columns || currY < 0) {
+        if (currRow === rows || currRow < 0 || currCol === columns || currCol < 0) {
             // exited grid
-            console.log(`Exited grid: ${currX},${currY}`);
+            console.log(`Exited grid: ${currRow},${currCol}`);
             paths = 4;
             break;
         }
@@ -406,23 +407,23 @@ function generate(rows: number, columns: number) {
     }
 
     // complete the winning path to the goal
-    const offsetX = goalX - currX;
-    const offsetY = goalY - currY;
+    const offsetX = goalRow - currRow;
+    const offsetY = goalCol - currCol;
 
     if (offsetX == 0) {
-        grid.setDirection(currX, currY, offsetY > 0 ? Direction.DOWN : Direction.UP);
-        grid.setNumber(currX, currY, Math.abs(offsetY));
+        grid.setDirection(currRow, currCol, offsetY > 0 ? Direction.DOWN : Direction.UP);
+        grid.setNumber(currRow, currCol, Math.abs(offsetY));
     } else if (offsetY == 0) {
-        grid.setDirection(currX, currY, offsetX > 0 ? Direction.RIGHT : Direction.LEFT);
-        grid.setNumber(currX, currY, Math.abs(offsetX));
+        grid.setDirection(currRow, currCol, offsetX > 0 ? Direction.RIGHT : Direction.LEFT);
+        grid.setNumber(currRow, currCol, Math.abs(offsetX));
     } else { // two moves required
         const yDir = offsetY > 0 ? Direction.DOWN : Direction.UP;
-        grid.setDirection(currX, currY, yDir);
-        grid.setNumber(currX, currY, Math.abs(offsetY));
+        grid.setDirection(currRow, currCol, yDir);
+        grid.setNumber(currRow, currCol, Math.abs(offsetY));
 
-        const next = applySteps(currX, currY, yDir, Math.abs(offsetY));
-        grid.setDirection(next.x, next.y, offsetX > 0 ? Direction.RIGHT : Direction.LEFT);
-        grid.setNumber(next.x, next.y, Math.abs(offsetX));
+        const next = applySteps(currRow, currCol, yDir, Math.abs(offsetY));
+        grid.setDirection(next.row, next.col, offsetX > 0 ? Direction.RIGHT : Direction.LEFT);
+        grid.setNumber(next.row, next.col, Math.abs(offsetX));
     }
 
     // complete the non-winning paths from edge back to edge (or loop?!)
@@ -453,8 +454,8 @@ function testStartSquares() {
     const cols = 3;
     for (let i = 0; i < 12; i++) {
         const s = startPoint(rows, cols, i);
-        if (s.x !== expected[i].x || s.y !== expected[i].y) {
-            console.log(`${i}: ${s.x}, ${s.y}`);
+        if (s.col !== expected[i].x || s.row !== expected[i].y) {
+            console.log(`${i}: ${s.row}, ${s.col}`);
             console.log("test failed");
         }
     }
