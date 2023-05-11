@@ -1,3 +1,4 @@
+import { count } from "console";
 import { readFileSync } from "fs";
 
 export enum Direction {
@@ -187,7 +188,7 @@ function svgArrow(cellSize: number, direction: Direction, centerX: number, y: nu
 }
 
 function testTwo() {
-    const grid = bigExampleGrid();
+    const grid = exampleGrid();
     const square = grid.getSquare(1, 6);
 
     let passed = true;
@@ -232,38 +233,64 @@ function testOne() {
 
 // console.log(svgGrid(gridFromFile("example_7x7.json"), 7, 7));
 
-function rnd(max) {
+// random integer in 0..max-1
+function rnd(max: number) {
 
-    return Math.floor(Math.random() * max) + 1;
+    return Math.floor(Math.random() * max);
 }
 
-function generate(rows :number, columns :number) {
+function countEdgeSquares(rows: number, columns: number) {
+    let edges = 2 * rows;
+    if (columns > 2) {
+        edges += 2 * (columns - 2);
+    }
+    return edges;
+}
+
+function startPoint(rows: number, columns: number, index: number) {
+    let x;
+    let y;
+    if (index < columns) {
+        x = index;
+        y = 0;
+    }
+    if (index >= columns && index < columns + rows - 1) {
+        x = columns - 1;
+        y = index - columns + 1;
+    }
+    if (index >= columns + rows - 1 && index < 2 * columns + rows - 3) {
+        x = 2 * columns + rows - 3 - index;
+        y = rows - 1;
+    }
+    if (index >= 2 * columns + rows - 3) {
+        x = 0;
+        y = 2 * columns + 2 * rows - 4 - index;
+    }
+
+    return { x, y };
+}
+
+function generate(rows: number, columns: number) {
     let grid = new Grid(rows, columns);
 
-    const goalX = Math.floor(Math.random() * rows) + 1;
+    const goalX = rnd(columns - 2) + 1; // not on edge
+    const goalY = rnd(rows - 2) + 1; // not on edge
 
-    const goalY = Math.floor(Math.random() * columns) + 1;
-    
-    let startX;
-    let startY;
-    const start = rnd(rows * columns - 4);
-        if (start <= columns) {
-            startY = 0;
-            startX = columns - 1;
-        }
-        if (start > columns && start <= columns + rows) {
-            startX = columns - 1;
-            startY = start - columns - 1;
-        }
-        if (start > columns + rows && start <= 2 * columns + rows) {
-            startX = start - columns - rows;
-            startY = rows - 1;
-        }
-        if (start > 2 * columns + rows) {
-            startX = 0;
-            startY = start - 2 * columns - rows - 1;
-        }
-    console.log(`start ${start}: ${startX}, ${startY}`);
+    const { x, y } = startPoint(rows, columns, rnd(countEdgeSquares(rows, columns)));
+
+    console.log(`start: ${x}, ${y}; goal: ${goalX}, ${goalY}`);
+
 }
 
-generate(7, 7);
+function testGenerate() {
+    const rows = 5;
+    const cols = 3;
+    for (let i = 0; i < 12; i++) {
+        const s = startPoint(rows, cols, i);
+        console.log(`${i}: ${s.x}, ${s.y}`);
+    }
+}
+
+testGenerate();
+
+//generate(7, 7);
