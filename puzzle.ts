@@ -239,14 +239,31 @@ function rnd(max) {
 
 function generate(rows :number, columns :number) {
     let grid = new Grid(rows, columns);
-    
 
     const goalX = Math.floor(Math.random() * rows) + 1;
 
-
     const goalY = Math.floor(Math.random() * columns) + 1;
     
-    const startX = rnd(rows);
-    const startY = rnd(columns);
-
+    let startX;
+    let startY;
+    const start = rnd(rows * columns - 4);
+        if (start <= columns) {
+            startY = 0;
+            startX = columns - 1;
+        }
+        if (start > columns && start <= columns + rows) {
+            startX = columns - 1;
+            startY = start - columns - 1;
+        }
+        if (start > columns + rows && start <= 2 * columns + rows) {
+            startX = start - columns - rows;
+            startY = rows - 1;
+        }
+        if (start > 2 * columns + rows) {
+            startX = 0;
+            startY = start - 2 * columns - rows - 1;
+        }
+    console.log(`start ${start}: ${startX}, ${startY}`);
 }
+
+generate(7, 7);
