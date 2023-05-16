@@ -1,5 +1,5 @@
 import assert from "assert";
-import { startPoint } from "../src/puzzle";
+import { startPoint } from "../puzzle";
 
 
 describe("puzzle", () => {

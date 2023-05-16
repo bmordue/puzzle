@@ -1,6 +1,6 @@
 import assert from "assert";
-import { Direction, Grid } from "../src/grid";
-import { exampleGrid } from "../src/util";
+import { Direction, Grid } from "../grid";
+import { exampleGrid } from "../util";
 
 
 describe("grid", () => {
