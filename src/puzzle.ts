@@ -1,3 +1,5 @@
+import { writeFileSync } from "fs";
+import { svgGrid } from "./draw";
 import { Direction, Grid } from "./grid";
 
 // random integer in 0..max-1
@@ -40,7 +42,7 @@ export function startPoint(rows: number, columns: number, index: number) {
 function randomDirection(): Direction {
     const values = Object.values(Direction);
     // don't choose Direction.NONE!
-    return values[rnd(4) + 1];
+    return values[rnd(4)];
 }
 
 function applySteps(row: number, col: number, dir: Direction, steps: number) {
@@ -95,16 +97,20 @@ function generate(rows: number, columns: number) {
         let badLoop = true;
         let attempts = 0;
         while (badLoop && attempts < 10) {
+            attempts++;
             dir = randomDirection();
-            steps = rnd(grid.distanceToEdge(row!, col!, dir) - 1) + 1; //+ 1; // + 1: allow exits from grid
+            steps = rnd(grid.distanceToEdge(row!, col!, dir)) + 1;
             console.log(`candidate step: ${steps} ${dir}`);
             const candidate = applySteps(currRow, currCol, dir, steps);
             console.log(`candidate destination: ${candidate.row}, ${candidate.col}`);
-            console.log(`grid square: ${JSON.stringify(grid.getSquare(candidate.row, candidate.col))}`);
-            if (grid.getSquare(candidate.row, candidate.col).direction === Direction.NONE) {
-                badLoop = false;
+            if (candidate.row >= rows || candidate.col >= columns || candidate.row < 0 || candidate.col < 0) {
+                console.log("leaving grid - no good for winning path generation");
+            } else {
+                console.log(`grid square: ${JSON.stringify(grid.getSquare(candidate.row, candidate.col))}`);
+                if (grid.getSquare(candidate.row, candidate.col).direction === Direction.NONE) {
+                    badLoop = false;
+                }
             }
-            attempts++;
         }
 
         console.log(`Found a step: ${steps} ${dir}`);
@@ -159,6 +165,4 @@ function generate(rows: number, columns: number) {
     return grid;
 }
 
-
-
-//testStartSquares();
+writeFileSync("newgrid.svg", svgGrid(generate(4, 4), 4, 4));

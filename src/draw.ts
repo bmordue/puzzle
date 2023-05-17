@@ -60,16 +60,16 @@ function svgArrow(cellSize: number, direction: Direction, centerX: number, y: nu
     let points = "";
     const arrowSize = cellSize / 4;
     switch (direction) {
-        case Direction.UP:
+        case Direction.LEFT:
             points = `${centerX},${y + arrowSize} ${x + arrowSize},${y + cellSize - arrowSize} ${x + cellSize - arrowSize},${y + cellSize - arrowSize}`;
             break;
-        case Direction.DOWN:
+        case Direction.RIGHT:
             points = `${centerX},${y + cellSize - arrowSize} ${x + arrowSize},${y + arrowSize} ${x + cellSize - arrowSize},${y + arrowSize}`;
             break;
-        case Direction.LEFT:
+        case Direction.UP:
             points = `${x + arrowSize},${centerY} ${x + cellSize - arrowSize},${y + arrowSize} ${x + cellSize - arrowSize},${y + cellSize - arrowSize}`;
             break;
-        case Direction.RIGHT:
+        case Direction.DOWN:
             points = `${x + cellSize - arrowSize},${centerY} ${x + arrowSize},${y + arrowSize} ${x + arrowSize},${y + cellSize - arrowSize}`;
             break;
     }
