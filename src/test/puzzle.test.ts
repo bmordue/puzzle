@@ -5,18 +5,18 @@ import { startPoint } from "../puzzle";
 describe("puzzle", () => {
     describe("testStartSquares", () => {
         const expected = [
-            { x: 0, y: 0 },
-            { x: 1, y: 0 },
-            { x: 2, y: 0 },
-            { x: 2, y: 1 },
-            { x: 2, y: 2 },
-            { x: 2, y: 3 },
-            { x: 2, y: 4 },
-            { x: 1, y: 4 },
-            { x: 0, y: 4 },
-            { x: 0, y: 3 },
-            { x: 0, y: 2 },
-            { x: 0, y: 1 },
+            { row: 0, col: 0 },
+            { row: 1, col: 0 },
+            { row: 2, col: 0 },
+            { row: 2, col: 1 },
+            { row: 2, col: 2 },
+            { row: 2, col: 3 },
+            { row: 2, col: 4 },
+            { row: 1, col: 4 },
+            { row: 0, col: 4 },
+            { row: 0, col: 3 },
+            { row: 0, col: 2 },
+            { row: 0, col: 1 },
         ];
 
         const rows = 5;
