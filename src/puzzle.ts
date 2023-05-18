@@ -376,12 +376,12 @@ export function generate(rows: number, columns: number) {
     console.log(winningPath.map((c) => `(${c.row}, ${c.col})`).join(', '));
 
     // complete the non-winning paths from edge back to edge (or loop?!)
-    for (let i = 0; i < countEdgeSquares(rows, columns); i++) {
-        if (i !== winningIndex) {
-            const start = startPoint(rows, columns, i);
-            pathsToExit(grid, goalRow, goalCol, start.row, start.col, pathLength, winningPath);
-        }
-    }
+    // for (let i = 0; i < countEdgeSquares(rows, columns); i++) {
+    //     if (i !== winningIndex) {
+    //         const start = startPoint(rows, columns, i);
+    //         pathsToExit(grid, goalRow, goalCol, start.row, start.col, pathLength, winningPath);
+    //     }
+    // }
 
     // fill in any remaining (unreachable) blank grid squares
     fillBlanks(grid, winningPath);
