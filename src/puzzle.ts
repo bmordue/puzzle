@@ -16,7 +16,7 @@ function countEdgeSquares(rows: number, columns: number) {
     return edges;
 }
 
-export function startPoint(rows: number, columns: number, index: number) {
+export function startPoint(rows: number, columns: number, index: number): Coord {
     let x;
     let y;
     if (index < columns) {
@@ -36,6 +36,8 @@ export function startPoint(rows: number, columns: number, index: number) {
         y = 2 * columns + 2 * rows - 4 - index;
     }
 
+    if (x == undefined) x = -1;
+    if (y == undefined) y = -1;
     return { row: x, col: y };
 }
 
@@ -71,15 +73,15 @@ export type Coord = {
 };
 
 // TODO move this to Grid class...
-function pathToGoal(grid: Grid, goalRow: number, goalCol: number, row: number, col: number, pathLength: number): Coord[] {
-    console.log(`Finding path to goal: ${goalRow},${goalCol}; start: ${row},${col}`);
+function pathToGoal(grid: Grid, goal: Coord, start: Coord, pathLength: number): Coord[] {
+    console.log(`Finding path to goal: ${goal.row},${goal.col}; start: ${start.row},${start.col}`);
 
     const rows = grid.rows;
     const columns = grid.columns;
 
     let paths = 0;
-    let currRow = row;
-    let currCol = col;
+    let currRow = start.row;
+    let currCol = start.col;
     grid.addDecorator(currRow, currCol, 's'); // decorator for starting square
 
     const winningPath: Coord[] = [];
@@ -97,7 +99,7 @@ function pathToGoal(grid: Grid, goalRow: number, goalCol: number, row: number, c
         while (badPath && attempts < 10) {
             attempts++;
             dir = randomDirection();
-            steps = rnd(grid.distanceToEdge(row, col, dir)) + 1;
+            steps = rnd(grid.distanceToEdge(start.row, start.col, dir)) + 1;
             const candidate = applySteps(currRow, currCol, dir, steps);
             if (candidate.row >= rows - 1 || candidate.col >= columns - 1 || candidate.row < 1 || candidate.col < 1) {
                 // leaving grid or on edge - no good for winning path generation
@@ -122,7 +124,7 @@ function pathToGoal(grid: Grid, goalRow: number, goalCol: number, row: number, c
         currRow = next.row;
         currCol = next.col;
 
-        if (currRow === goalRow && currCol === goalCol) {
+        if (currRow === goal.row && currCol === goal.col) {
             console.log("reached goal");
             break;
         }
@@ -137,8 +139,8 @@ function pathToGoal(grid: Grid, goalRow: number, goalCol: number, row: number, c
 
 
     // complete the winning path to the goal
-    const offsetX = goalRow - currRow;
-    const offsetY = goalCol - currCol;
+    const offsetX = goal.row - currRow;
+    const offsetY = goal.col - currCol;
 
     if (offsetX == 0 && offsetY == 0) {
         // do not overwrite the goal!
@@ -164,7 +166,7 @@ function pathToGoal(grid: Grid, goalRow: number, goalCol: number, row: number, c
             grid.setNumber(next.row, next.col, Math.abs(offsetX));
         }
     }
-    winningPath.push({ row: goalRow, col: goalCol });
+    winningPath.push(goal);
 
     return winningPath;
 }
@@ -189,7 +191,7 @@ function pathsToExit(grid: Grid, goalRow: number, goalCol: number, startRow: num
         // jump around randomly a few times
         let exited = false;
         while (paths < pathLength && !exited) {
-            const { dir, steps } = nextMoveToExit(grid, startRow, startCol, currRow, currCol, goalRow, goalCol, rows, columns, winningPath);
+            const { dir, steps } = nextMoveToExit(grid, { row: startRow, col: startCol }, { row: currRow, col: currCol }, { row: goalRow, col: goalCol }, winningPath);
 
             console.log(`Found a step: ${steps} ${dir}`);
 
@@ -201,7 +203,6 @@ function pathsToExit(grid: Grid, goalRow: number, goalCol: number, startRow: num
             currCol = next.col;
 
             if (currRow >= rows || currRow < 0 || currCol >= columns || currCol < 0) {
-                // console.log(`Exited grid: ${currRow},${currCol}`);
                 exited = true;
             }
 
@@ -214,7 +215,7 @@ function pathsToExit(grid: Grid, goalRow: number, goalCol: number, startRow: num
         }
     } catch (e) {
         console.log(`Caught an error; dumping partial SVG`);
-        writeFileSync("complete.svg", svgGrid(grid, grid.rows, grid.columns));
+        writeFileSync("complete.svg", svgGrid(grid));
         throw e;
     }
 
@@ -229,51 +230,56 @@ function straightToExit(grid: Grid, current: Coord): GridSquare {
 }
 
 
-function nextMoveToExit(grid: Grid, startRow: number, startCol: number, currRow: number, currCol: number, goalRow: number, goalCol: number, rows: number, columns: number, winningPath: Coord[]) {
+function nextMoveToExit(grid: Grid, start: Coord, current: Coord, goal: Coord, winningPath: Coord[]) {
     let dir = Direction.NONE;
     let steps = 0;
 
-    let badPath = true;
+    let validMove = false;
     let attempts = 0;
-    while (badPath) {
+    while (!validMove) {
         attempts++;
         if (attempts >= 10) {
-            const jump = straightToExit(grid, { row: startCol, col: startCol });
+            const jump = straightToExit(grid, start);
             return { dir: jump.direction, steps: jump.number };
         }
 
         dir = randomDirection();
-        steps = rnd(grid.distanceToEdge(startRow, startCol, dir)) + 1;
+        steps = rnd(grid.distanceToEdge(start.row, start.col, dir)) + 1;
         console.log(`candidate step: ${steps} ${dir}`);
-        const candidate = applySteps(currRow, currCol, dir, steps);
-        badPath = false;
+
+        const candidate = applySteps(current.row, current.col, dir, steps);
         console.log(`candidate destination: ${candidate.row}, ${candidate.col}`);
-        if (currRow === goalRow && currCol === goalCol) {
-            console.log("reached goal - don't want this path!");
-            badPath = true;
-            break;
-        }
 
-        if (candidate.row >= rows || candidate.col >= columns || candidate.row < 0 || candidate.col < 0) {
-            // console.log("leaving grid - no good for winning path generation");
-            badPath = false;
-        } else {
-            // console.log(`grid square: ${JSON.stringify(grid.getSquare(candidate.row, candidate.col))}`);
-            const candidateSquare = grid.getSquare(candidate.row, candidate.col);
-            if (candidateSquare.direction === Direction.NONE && candidateSquare.number !== 0) {
-                badPath = false;
-            } else {
-                badPath = true; // square is already occupied
-            }
-        }
-
-        if (winningPath.includes(candidate)) {
-            // do not join the winning path!
-            badPath = true;
-        }
+        validMove = isValidMoveToExit(current, goal, candidate, grid, winningPath);
     }
 
     return { dir, steps };
+}
+
+function isValidMoveToExit(current: Coord, goal: Coord, candidate: { row: number; col: number; }, grid: Grid, winningPath: Coord[]): boolean {
+    let validMove;
+    if (current.row === goal.row && current.col === goal.col) {
+        console.log("reached goal - don't want this path!");
+        return false;
+    }
+
+    if (candidate.row >= grid.rows || candidate.col >= grid.columns || candidate.row < 0 || candidate.col < 0) {
+        // leaving grid
+        validMove = true;
+    } else {
+        const candidateSquare = grid.getSquare(candidate.row, candidate.col);
+        if (candidateSquare.direction === Direction.NONE && candidateSquare.number !== 0) {
+            validMove = true;
+        } else {
+            validMove = false; // square is already occupied
+        }
+    }
+
+    if (winningPath.includes(candidate)) {
+        // do not join the winning path!
+        validMove = false;
+    }
+    return validMove;
 }
 
 function generate(rows: number, columns: number) {
@@ -295,10 +301,10 @@ function generate(rows: number, columns: number) {
 
     // pick a winning start square and path to goal
     const winningIndex = rnd(countEdgeSquares(rows, columns));
-    const { row, col } = startPoint(rows, columns, winningIndex);
+    const winningStart = startPoint(rows, columns, winningIndex);
 
-    const winningPath: Coord[] = pathToGoal(grid, goalRow, goalCol, row!, col!, pathLength);
-    writeFileSync("winning.svg", svgGrid(grid, 4, 4));
+    const winningPath: Coord[] = pathToGoal(grid, { row: goalRow, col: goalCol }, winningStart, pathLength);
+    writeFileSync("winning.svg", svgGrid(grid));
 
     console.log(winningPath.length);
     console.log(winningPath.map((c) => `(${c.row}, ${c.col})`).join(', '));
@@ -307,7 +313,7 @@ function generate(rows: number, columns: number) {
     for (let i = 0; i < countEdgeSquares(rows, columns); i++) {
         if (i !== winningIndex) {
             const start = startPoint(rows, columns, i);
-            pathsToExit(grid, goalRow, goalCol, start.row!, start.col!, pathLength, winningPath);
+            pathsToExit(grid, goalRow, goalCol, start.row, start.col, pathLength, winningPath);
         }
     }
 
@@ -316,4 +322,4 @@ function generate(rows: number, columns: number) {
     return grid;
 }
 
-writeFileSync("complete.svg", svgGrid(generate(4, 4), 4, 4));
+writeFileSync("complete.svg", svgGrid(generate(4, 4)));

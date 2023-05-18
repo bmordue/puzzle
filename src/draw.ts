@@ -1,7 +1,9 @@
 import { Grid, Direction } from "./grid";
 
-export function svgGrid(grid: Grid, rows: number, cols: number) {
+export function svgGrid(grid: Grid) {
 
+    const rows = grid.rows;
+    const cols = grid.columns;
     // SVG parameters
     const CELL_SIZE = 50;
     const STROKE_WIDTH = 2;

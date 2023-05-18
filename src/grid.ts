@@ -85,7 +85,6 @@ export class Grid {
         return str;
     }
 
-    // TODO make this a method of the Grid class
     public distanceToEdge(startX: number, startY: number, dir: Direction) {
         let distance = 0;
 
