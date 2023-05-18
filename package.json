@@ -7,12 +7,19 @@
   },
   "scripts": {
     "prestart": "npx tsc",
-    "start": "node built/puzzle.js"
+    "start": "node built/puzzle.js",
+    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha"
+  },
+  "directories": {
+    "test": "./test"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/mocha": "^10.0.1",
     "@types/node": "^18.16.3",
+    "mocha": "^10.2.0",
+    "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   }
 }
