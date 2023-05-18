@@ -91,30 +91,7 @@ function pathToGoal(grid: Grid, goal: Coord, start: Coord, pathLength: number): 
     // jump around randomly a few times
     while (paths < pathLength) {
         // if (blankSquares > 0)
-        let dir = Direction.NONE;
-        let steps = 0;
-
-        let badPath = true;
-        let attempts = 0;
-        while (badPath && attempts < 10) {
-            attempts++;
-            dir = randomDirection();
-            steps = rnd(grid.distanceToEdge(start.row, start.col, dir)) + 1;
-            const candidate = applySteps(currRow, currCol, dir, steps);
-            if (candidate.row >= rows - 1 || candidate.col >= columns - 1 || candidate.row < 1 || candidate.col < 1) {
-                // leaving grid or on edge - no good for winning path generation
-            } else {
-                if (grid.getSquare(candidate.row, candidate.col).direction === Direction.NONE) {
-                    badPath = false;
-                }
-            }
-            // avoid loops
-            if (winningPath.includes(candidate)) {
-                badPath = true;
-            }
-
-        }
-
+        const { dir, steps } = nextMoveToGoal(grid, start, { row: currRow, col: currCol }, winningPath);
 
         grid.setDirection(currRow, currCol, dir);
         grid.setNumber(currRow, currCol, steps);
@@ -137,38 +114,68 @@ function pathToGoal(grid: Grid, goal: Coord, start: Coord, pathLength: number): 
         paths++;
     }
 
-
     // complete the winning path to the goal
-    const offsetX = goal.row - currRow;
-    const offsetY = goal.col - currCol;
-
-    if (offsetX == 0 && offsetY == 0) {
-        // do not overwrite the goal!
-    } else {
-        winningPath.push({ row: currRow, col: currCol });
-
-        if (offsetX == 0) {
-            grid.setDirection(currRow, currCol, offsetY > 0 ? Direction.DOWN : Direction.UP);
-            grid.setNumber(currRow, currCol, Math.abs(offsetY));
-        } else if (offsetY == 0) {
-            grid.setDirection(currRow, currCol, offsetX > 0 ? Direction.RIGHT : Direction.LEFT);
-            grid.setNumber(currRow, currCol, Math.abs(offsetX));
-        } else { // two moves required
-            const yDir = offsetY > 0 ? Direction.DOWN : Direction.UP;
-            grid.setDirection(currRow, currCol, yDir);
-            grid.setNumber(currRow, currCol, Math.abs(offsetY));
-
-            const next = applySteps(currRow, currCol, yDir, Math.abs(offsetY));
-
-            winningPath.push({ row: next.row, col: next.col });
-
-            grid.setDirection(next.row, next.col, offsetX > 0 ? Direction.RIGHT : Direction.LEFT);
-            grid.setNumber(next.row, next.col, Math.abs(offsetX));
-        }
-    }
+    straightToGoal(grid, goal, { row: currRow, col: currCol }, winningPath);
     winningPath.push(goal);
 
     return winningPath;
+}
+
+function nextMoveToGoal(grid: Grid, start: Coord, current: Coord, winningPath: Coord[]) {
+    let dir = Direction.NONE;
+    let steps = 0;
+
+    let badPath = true;
+    let attempts = 0;
+    while (badPath && attempts < 10) {
+        attempts++;
+        dir = randomDirection();
+        steps = rnd(grid.distanceToEdge(start.row, start.col, dir)) + 1;
+        const candidate = applySteps(current.row, current.col, dir, steps);
+        if (candidate.row >= grid.rows - 1 || candidate.col >= grid.columns - 1 || candidate.row < 1 || candidate.col < 1) {
+            // leaving grid or on edge - no good for winning path generation
+        } else {
+            if (grid.getSquare(candidate.row, candidate.col).direction === Direction.NONE) {
+                badPath = false;
+            }
+        }
+        // avoid loops
+        if (winningPath.includes(candidate)) {
+            badPath = true;
+        }
+
+    }
+    return { dir, steps };
+}
+
+function straightToGoal(grid: Grid, goal: Coord, current: Coord, winningPath: Coord[]) {
+    const offsetX = goal.row - current.row;
+    const offsetY = goal.col - current.col;
+
+    if (offsetX == 0 && offsetY == 0) {
+        // do not overwrite the goal!
+        return;
+    }
+    winningPath.push(current);
+
+    if (offsetX == 0) {
+        grid.setDirection(current.row, current.col, offsetY > 0 ? Direction.DOWN : Direction.UP);
+        grid.setNumber(current.row, current.col, Math.abs(offsetY));
+    } else if (offsetY == 0) {
+        grid.setDirection(current.row, current.col, offsetX > 0 ? Direction.RIGHT : Direction.LEFT);
+        grid.setNumber(current.row, current.col, Math.abs(offsetX));
+    } else { // two moves required
+        const yDir = offsetY > 0 ? Direction.DOWN : Direction.UP;
+        grid.setDirection(current.row, current.col, yDir);
+        grid.setNumber(current.row, current.col, Math.abs(offsetY));
+
+        const next = applySteps(current.row, current.col, yDir, Math.abs(offsetY));
+
+        winningPath.push({ row: next.row, col: next.col });
+
+        grid.setDirection(next.row, next.col, offsetX > 0 ? Direction.RIGHT : Direction.LEFT);
+        grid.setNumber(next.row, next.col, Math.abs(offsetX));
+    }
 }
 
 function pathsToExit(grid: Grid, goalRow: number, goalCol: number, startRow: number, startCol: number, pathLength: number, winningPath: Coord[]) {
