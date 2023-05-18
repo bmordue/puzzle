@@ -47,11 +47,18 @@ export class Grid {
     public setDirection(row: number, column: number, direction: Direction): void {
         const square = this.grid[row][column];
 
+        if (square.direction !== Direction.NONE) {
+            throw new Error(`Eek: overwriting existing direction (${row},${column}: ${square.number} ${square.direction})`);
+        }
         square.direction = direction;
     }
 
     public setNumber(row: number, column: number, number: number): void {
-        this.grid[row][column].number = number;
+        const square = this.grid[row][column];
+        // if (square.number !== 1) {
+        //     console.log(`Eek: overwriting existing direction (${row},${column}: ${square.number} ${square.direction})`);
+        // }
+        square.number = number;
     }
 
     addDecorator(row: number, column: number, decorator: string) {
