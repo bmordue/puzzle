@@ -339,9 +339,13 @@ function fillBlanks(grid: Grid, winningPath: Coord[]) {
                 destCandidates = grid
                     .listSquares()
                     .filter((s) => { return s.col === sq.col && s.row > sq.row && isBlank(s); });
-                i = rnd(destCandidates.length);
-                dest = destCandidates[i];
-                grid.setNumber(sq.row, sq.col, dest.row - sq.row);
+                if (destCandidates.length == 0) {
+                    grid.setNumber(sq.row, sq.col, grid.rows - sq.row);
+                } else {
+                    i = rnd(destCandidates.length);
+                    dest = destCandidates[i];
+                    grid.setNumber(sq.row, sq.col, dest.row - sq.row);
+                }
                 break;
         }
     });

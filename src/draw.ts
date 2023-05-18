@@ -26,7 +26,7 @@ export function svgGrid(grid: Grid) {
             svg += `\n<rect x="${x}" y="${y}" width="${CELL_SIZE}" height="${CELL_SIZE}" stroke="${STROKE_COLOR}" stroke-width="${STROKE_WIDTH}" fill="white" />`;
 
             // add coords
-            svg += `\n<text x="${centerX + CELL_SIZE / 4}" y="${centerY + CELL_SIZE / 3}" font-size="10" font-family="${FONT_FAMILY}" text-anchor="middle" alignment-baseline="central" stroke="black" fill="black">${row}, ${col}</text>`;
+            // svg += `\n<text x="${centerX + CELL_SIZE / 4}" y="${centerY + CELL_SIZE / 3}" font-size="10" font-family="${FONT_FAMILY}" text-anchor="middle" alignment-baseline="central" stroke="black" fill="black">${row}, ${col}</text>`;
 
             if (direction === Direction.NONE && number === 0) {
                 // Draw the goal
