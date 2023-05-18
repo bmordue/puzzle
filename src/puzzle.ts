@@ -1,4 +1,4 @@
-import { Dir, writeFileSync } from "fs";
+import { writeFileSync } from "fs";
 import { svgGrid } from "./draw";
 import { Direction, Grid, GridSquare, isBlank } from "./grid";
 
@@ -292,62 +292,47 @@ function fillBlanks(grid: Grid, winningPath: Coord[]) {
     // for each blank square
     // try to jump to another blank square
     // if none available, jump to any square not on the winning path
-    // TODO: could use this simpler algorithm for all squares not on the winning path!!
     grid.listSquares().filter(isBlank).forEach((sq) => {
         const dir = randomDirection();
         grid.setDirection(sq.row, sq.col, dir);
         let destCandidates = [];
         let i; let dest;
+        let dirPredicate = (x: GridSquare) => false;
+        let destNumber = (x: GridSquare) => 0;
+        let exitNumber = 0;
         switch (dir) {
             case Direction.LEFT:
-                destCandidates = grid
-                    .listSquares()
-                    .filter((s) => { return s.row === sq.row && s.col < sq.col && isBlank(s); });
-                if (destCandidates.length == 0) {
-                    grid.setNumber(sq.row, sq.col, sq.col + 1);
-                } else {
-                    i = rnd(destCandidates.length);
-                    dest = destCandidates[i];
-                    grid.setNumber(sq.row, sq.col, sq.col - dest.col);
-                }
+                dirPredicate = (s: GridSquare) => s.row === sq.row && s.col! < sq.col;
+                exitNumber = sq.col + 1;
+                destNumber = (dest: GridSquare) => sq.col - dest.col!;
                 break;
             case Direction.RIGHT:
-                destCandidates = grid
-                    .listSquares()
-                    .filter((s) => { return s.row === sq.row && s.col > sq.col && isBlank(s); });
-                if (destCandidates.length == 0) {
-                    grid.setNumber(sq.row, sq.col, grid.columns - sq.col);
-                } else {
-                    i = rnd(destCandidates.length);
-                    dest = destCandidates[i];
-                    grid.setNumber(sq.row, sq.col, dest.col - sq.col);
-                }
+                dirPredicate = (s: GridSquare) => s.row === sq.row && s.col! > sq.col;
+                exitNumber = grid.columns - sq.col;
+                destNumber = (dest: GridSquare) => dest.col! - sq.col;
                 break;
             case Direction.UP:
-                destCandidates = grid
-                    .listSquares()
-                    .filter((s) => { return s.col === sq.col && s.row < sq.row && isBlank(s); });
-                if (destCandidates.length == 0) {
-                    grid.setNumber(sq.row, sq.col, sq.row + 1);
-                } else {
-                    i = rnd(destCandidates.length);
-                    dest = destCandidates[i];
-                    grid.setNumber(sq.row, sq.col, sq.row - dest.row);
-                }
+                dirPredicate = (s: GridSquare) => s.col === sq.col && s.row! < sq.row;
+                exitNumber = sq.row + 1;
+                destNumber = (dest: GridSquare) => sq.row - dest.row!;
                 break;
             case Direction.DOWN:
-                destCandidates = grid
-                    .listSquares()
-                    .filter((s) => { return s.col === sq.col && s.row > sq.row && isBlank(s); });
-                if (destCandidates.length == 0) {
-                    grid.setNumber(sq.row, sq.col, grid.rows - sq.row);
-                } else {
-                    i = rnd(destCandidates.length);
-                    dest = destCandidates[i];
-                    grid.setNumber(sq.row, sq.col, dest.row - sq.row);
-                }
+                dirPredicate = (s: GridSquare) => s.col === sq.col && s.row! > sq.row;
+                exitNumber = grid.rows - sq.row;
+                destNumber = (dest: GridSquare) => dest.row! - sq.row;
                 break;
         }
+        destCandidates = grid
+            .listSquares()
+            .filter(dirPredicate).filter(isBlank);
+        if (destCandidates.length == 0) {
+            grid.setNumber(sq.row, sq.col, exitNumber);
+        } else {
+            i = rnd(destCandidates.length);
+            dest = destCandidates[i];
+            grid.setNumber(sq.row, sq.col, destNumber(dest));
+        }
+
     });
 }
 

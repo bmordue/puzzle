@@ -10,6 +10,8 @@ export interface GridSquare {
     direction: Direction;
     number: number;
     decorators?: string;
+    row?: number;
+    col?: number;
 }
 
 export class Grid {
