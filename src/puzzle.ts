@@ -65,31 +65,21 @@ function applySteps(row: number, col: number, dir: Direction, steps: number) {
     return { row: newRow, col: newCol };
 }
 
-function generate(rows: number, columns: number) {
-    let grid = new Grid(rows, columns);
+// TODO move this to Grid class...
+function pathToGoal(grid: Grid, goalRow: number, goalCol: number, row: number, col: number, pathLength: number): Grid {
+    console.log(`Finding path to goal: ${goalRow},${goalCol}; start: ${row},${col}`);
 
-    // pick a goal square
-    const goalRow = rnd(columns - 2) + 1; // not on edge
-    const goalCol = rnd(rows - 2) + 1; // not on edge
-    grid.setNumber(goalRow, goalCol, 0);
-
-    // aim for a rough path length, but not guaranteed
-    const pathLength = rows * columns / (2 * (rows + columns - 2));
-    console.log(`Grid size ${rows}x${columns}; target path length: ${pathLength}`);
-
-    // pick a winning start square and path to goal
-    const { row, col } = startPoint(rows, columns, rnd(countEdgeSquares(rows, columns)));
-
-    console.log(`goal: ${goalRow},${goalCol}; start: ${row},${col}`);
+    const rows = grid.rows;
+    const columns = grid.columns;
 
     let paths = 0;
-    let currRow = row!;
-    let currCol = col!;
+    let currRow = row;
+    let currCol = col;
     grid.addDecorator(currRow, currCol, 's'); // decorator for starting square
 
     // TODO: move this out into its own function
     // jump around randomly a few times
-    while (paths < 4) {
+    while (paths < pathLength) {
         // if (blankSquares > 0)
         let dir = Direction.NONE;
         let steps = 0;
@@ -99,21 +89,21 @@ function generate(rows: number, columns: number) {
         while (badLoop && attempts < 10) {
             attempts++;
             dir = randomDirection();
-            steps = rnd(grid.distanceToEdge(row!, col!, dir)) + 1;
-            console.log(`candidate step: ${steps} ${dir}`);
+            steps = rnd(grid.distanceToEdge(row, col, dir)) + 1;
+            // console.log(`candidate step: ${steps} ${dir}`);
             const candidate = applySteps(currRow, currCol, dir, steps);
-            console.log(`candidate destination: ${candidate.row}, ${candidate.col}`);
+            // console.log(`candidate destination: ${candidate.row}, ${candidate.col}`);
             if (candidate.row >= rows || candidate.col >= columns || candidate.row < 0 || candidate.col < 0) {
-                console.log("leaving grid - no good for winning path generation");
+                // console.log("leaving grid - no good for winning path generation");
             } else {
-                console.log(`grid square: ${JSON.stringify(grid.getSquare(candidate.row, candidate.col))}`);
+                // console.log(`grid square: ${JSON.stringify(grid.getSquare(candidate.row, candidate.col))}`);
                 if (grid.getSquare(candidate.row, candidate.col).direction === Direction.NONE) {
                     badLoop = false;
                 }
             }
         }
 
-        console.log(`Found a step: ${steps} ${dir}`);
+        // console.log(`Found a step: ${steps} ${dir}`);
 
         grid.setDirection(currRow, currCol, dir);
         grid.setNumber(currRow, currCol, steps);
@@ -124,14 +114,11 @@ function generate(rows: number, columns: number) {
 
         if (currRow === goalRow && currCol === goalCol) {
             console.log("reached goal");
-            paths = 4;
             break;
         }
 
         if (currRow === rows || currRow < 0 || currCol === columns || currCol < 0) {
-            // exited grid
-            console.log(`Exited grid: ${currRow},${currCol}`);
-            paths = 4;
+            // console.log(`Exited grid: ${currRow},${currCol}`);
             break;
         }
 
@@ -157,8 +144,115 @@ function generate(rows: number, columns: number) {
         grid.setDirection(next.row, next.col, offsetX > 0 ? Direction.RIGHT : Direction.LEFT);
         grid.setNumber(next.row, next.col, Math.abs(offsetX));
     }
+    return grid;
+}
+
+
+function pathsToExit(grid: Grid, goalRow: number, goalCol: number, startRow: number, startCol: number, pathLength: number): Grid {
+    console.log(`Finding path to exit for ${startRow},${startCol}`);
+    const rows = grid.rows;
+    const columns = grid.columns;
+
+    let paths = 0;
+    let currRow = startRow;
+    let currCol = startCol;
+
+    // TODO: move this out into its own function
+    // jump around randomly a few times
+    let exited = false;
+    while (paths < pathLength && !exited) {
+        // if (blankSquares > 0)
+        let dir = Direction.NONE;
+        let steps = 0;
+
+        let badPath = true;
+        let attempts = 0;
+        while (badPath && attempts < 10) {
+            attempts++;
+            dir = randomDirection();
+            steps = rnd(grid.distanceToEdge(startRow, startCol, dir)) + 1;
+            // console.log(`candidate step: ${steps} ${dir}`);
+            const candidate = applySteps(currRow, currCol, dir, steps);
+            // console.log(`candidate destination: ${candidate.row}, ${candidate.col}`);
+            if (currRow === goalRow && currCol === goalCol) {
+                console.log("reached goal - don't want this path!");
+                break;
+            }
+
+            if (candidate.row >= rows || candidate.col >= columns || candidate.row < 0 || candidate.col < 0) {
+                // console.log("leaving grid - no good for winning path generation");
+                exited = true;
+                badPath = false;
+            } else {
+                // console.log(`grid square: ${JSON.stringify(grid.getSquare(candidate.row, candidate.col))}`);
+                if (grid.getSquare(candidate.row, candidate.col).direction === Direction.NONE) {
+                    badPath = false;
+                }
+            }
+        }
+
+        // console.log(`Found a step: ${steps} ${dir}`);
+
+        grid.setDirection(currRow, currCol, dir);
+        grid.setNumber(currRow, currCol, steps);
+
+        const next = applySteps(currRow, currCol, dir, steps);
+        currRow = next.row;
+        currCol = next.col;
+
+
+        if (currRow === rows || currRow < 0 || currCol === columns || currCol < 0) {
+            console.log(`Exited grid: ${currRow},${currCol}`);
+            exited = true;
+        }
+
+        paths++;
+    }
+
+    // if not already exited, complete the path by exiting the grid
+    // TODO: make it just one step too far -- less obvious when looking at puzzle
+    if (!exited) {
+        const exitDir = randomDirection();
+        grid.setDirection(currRow, currCol, exitDir);
+        grid.setNumber(currRow, currCol, rows > columns ? rows : columns)
+    }
+
+    return grid;
+}
+
+
+function generate(rows: number, columns: number) {
+    let grid = new Grid(rows, columns);
+
+    // pick a goal square
+    const goalRow = rnd(columns - 2) + 1; // not on edge
+    const goalCol = rnd(rows - 2) + 1; // not on edge
+    grid.setNumber(goalRow, goalCol, 0);
+
+    // aim for a rough path length, but not guaranteed
+    //    const pathLength = rows * columns / (2 * (rows + columns - 2));
+    // console.log(`target path length: ${pathLength}`);
+
+    // TODO: come up with a useful heuristic for target path length
+    const pathLength = 4;
+
+    console.log(`Grid size ${rows}x${columns}`);
+
+    // pick a winning start square and path to goal
+    const winningIndex = rnd(countEdgeSquares(rows, columns));
+    const { row, col } = startPoint(rows, columns, winningIndex);
+
+    grid = pathToGoal(grid, goalRow, goalCol, row!, col!, pathLength);
 
     // complete the non-winning paths from edge back to edge (or loop?!)
+    for (let i = 0; i < countEdgeSquares(rows, columns); i++) {
+        if (i === winningIndex) {
+            // already done this one
+            break;
+        }
+        const start = startPoint(rows, columns, i);
+        grid = pathsToExit(grid, goalRow, goalCol, start.row!, start.col!, pathLength);
+    }
 
     // fill in any remaining (unreachable) blank grid squares 
 
