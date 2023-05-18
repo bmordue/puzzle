@@ -105,4 +105,18 @@ export class Grid {
 
         return distance;
     }
+
+    public listSquares() {
+        const squares = [];
+        for (let r = 0; r < this.rows; r++) {
+            for (let c = 0; c < this.columns; c++) {
+                squares.push({ ...this.getSquare(r, c), row: r, col: c });
+            }
+        }
+        return squares;
+    }
+}
+
+export function isBlank(square: { direction: Direction; number: number; row: number; col: number }) {
+    return square.direction === Direction.NONE && square.number !== 0;
 }

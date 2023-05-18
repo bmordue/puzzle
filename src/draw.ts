@@ -45,10 +45,10 @@ export function svgGrid(grid: Grid) {
             }
 
             // debug decorators
-            const decorators = grid.getSquare(row, col).decorators;
-            if (decorators?.includes('s')) {
-                svg += `\n<rect x="${x + 5}" y="${y + 5}" width="5" height="5" stroke="${STROKE_COLOR}" stroke-width="${STROKE_WIDTH}" fill="red" />`;
-            }
+            // const decorators = grid.getSquare(row, col).decorators;
+            // if (decorators?.includes('s')) {
+            //     svg += `\n<rect x="${x + 5}" y="${y + 5}" width="5" height="5" stroke="${STROKE_COLOR}" stroke-width="${STROKE_WIDTH}" fill="red" />`;
+            // }
 
         }
         svg += '\n';

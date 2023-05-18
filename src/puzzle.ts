@@ -1,6 +1,6 @@
-import { writeFileSync } from "fs";
+import { Dir, writeFileSync } from "fs";
 import { svgGrid } from "./draw";
-import { Direction, Grid, GridSquare } from "./grid";
+import { Direction, Grid, GridSquare, isBlank } from "./grid";
 
 // random integer in 0..max-1
 function rnd(max: number) {
@@ -236,7 +236,6 @@ function straightToExit(grid: Grid, current: Coord): GridSquare {
     return grid.getSquare(current.row, current.col);
 }
 
-
 function nextMoveToExit(grid: Grid, start: Coord, current: Coord, goal: Coord, winningPath: Coord[]) {
     let dir = Direction.NONE;
     let steps = 0;
@@ -289,7 +288,67 @@ function isValidMoveToExit(current: Coord, goal: Coord, candidate: { row: number
     return validMove;
 }
 
-function generate(rows: number, columns: number) {
+function fillBlanks(grid: Grid, winningPath: Coord[]) {
+    // for each blank square
+    // try to jump to another blank square
+    // if none available, jump to any square not on the winning path
+    // TODO: could use this simpler algorithm for all squares not on the winning path!!
+    grid.listSquares().filter(isBlank).forEach((sq) => {
+        const dir = randomDirection();
+        grid.setDirection(sq.row, sq.col, dir);
+        let destCandidates = [];
+        let i; let dest;
+        switch (dir) {
+            case Direction.LEFT:
+                destCandidates = grid
+                    .listSquares()
+                    .filter((s) => { return s.row === sq.row && s.col < sq.col && isBlank(s); });
+                if (destCandidates.length == 0) {
+                    grid.setNumber(sq.row, sq.col, sq.col + 1);
+                } else {
+                    i = rnd(destCandidates.length);
+                    dest = destCandidates[i];
+                    grid.setNumber(sq.row, sq.col, sq.col - dest.col);
+                }
+                break;
+            case Direction.RIGHT:
+                destCandidates = grid
+                    .listSquares()
+                    .filter((s) => { return s.row === sq.row && s.col > sq.col && isBlank(s); });
+                if (destCandidates.length == 0) {
+                    grid.setNumber(sq.row, sq.col, grid.columns - sq.col);
+                } else {
+                    i = rnd(destCandidates.length);
+                    dest = destCandidates[i];
+                    grid.setNumber(sq.row, sq.col, dest.col - sq.col);
+                }
+                break;
+            case Direction.UP:
+                destCandidates = grid
+                    .listSquares()
+                    .filter((s) => { return s.col === sq.col && s.row < sq.row && isBlank(s); });
+                if (destCandidates.length == 0) {
+                    grid.setNumber(sq.row, sq.col, sq.row + 1);
+                } else {
+                    i = rnd(destCandidates.length);
+                    dest = destCandidates[i];
+                    grid.setNumber(sq.row, sq.col, sq.row - dest.row);
+                }
+                break;
+            case Direction.DOWN:
+                destCandidates = grid
+                    .listSquares()
+                    .filter((s) => { return s.col === sq.col && s.row > sq.row && isBlank(s); });
+                i = rnd(destCandidates.length);
+                dest = destCandidates[i];
+                grid.setNumber(sq.row, sq.col, dest.row - sq.row);
+                break;
+        }
+    });
+}
+
+
+export function generate(rows: number, columns: number) {
     let grid = new Grid(rows, columns);
 
     // pick a goal square
@@ -302,7 +361,7 @@ function generate(rows: number, columns: number) {
     // console.log(`target path length: ${pathLength}`);
 
     // TODO: come up with a useful heuristic for target path length
-    const pathLength = 4;
+    const pathLength = 6;
 
     console.log(`Grid size ${rows}x${columns}`);
 
@@ -324,9 +383,11 @@ function generate(rows: number, columns: number) {
         }
     }
 
-    // fill in any remaining (unreachable) blank grid squares 
+    // fill in any remaining (unreachable) blank grid squares
+    fillBlanks(grid, winningPath);
 
     return grid;
 }
 
-writeFileSync("complete.svg", svgGrid(generate(4, 4)));
+writeFileSync("complete.svg", svgGrid(generate(10, 10)));
+
