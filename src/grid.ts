@@ -1,3 +1,6 @@
+import { Dir } from "fs";
+import { Coord } from "./puzzle";
+
 export enum Direction {
     UP = "up",
     DOWN = "down",
@@ -50,6 +53,8 @@ export class Grid {
         const square = this.grid[row][column];
 
         if (square.direction !== Direction.NONE) {
+            console.log('dumping partial grid:\n');
+            console.log(this.toString());
             throw new Error(`Eek: overwriting existing direction (${row},${column}: ${square.number} ${square.direction})`);
         }
         square.direction = direction;
@@ -61,6 +66,10 @@ export class Grid {
         //     console.log(`Eek: overwriting existing direction (${row},${column}: ${square.number} ${square.direction})`);
         // }
         square.number = number;
+    }
+
+    public setSquare(sq: GridSquare) {
+        this.grid[sq.row!][sq.col!] = sq;
     }
 
     addDecorator(row: number, column: number, decorator: string) {
@@ -117,8 +126,46 @@ export class Grid {
         }
         return squares;
     }
+
+    public getSize(): Coord {
+        return { row: this.rows, col: this.columns };
+    }
 }
 
-export function isBlank(square: { direction: Direction; number: number; row: number; col: number }) {
+export function isBlank(square: GridSquare) {
     return square.direction === Direction.NONE && square.number !== 0;
+}
+
+export function isNotBlank(square: GridSquare) {
+    return !isBlank(square);
+}
+
+export function sameRowOrColumn(start: Coord, dest: Coord): boolean {
+    return start.row === dest.row || start.col === dest.col;
+}
+
+export function squareFromCoords(start: Coord, dest: Coord): GridSquare {
+    if (!sameRowOrColumn(start, dest)) {
+        throw new Error("no valid move; squares not on some row or column");
+    }
+    let dir: Direction = Direction.NONE;
+    let steps: number = 0;
+    const sameRow = start.row === dest.row;
+    if (sameRow && start.col > dest.col) {
+        dir = Direction.UP;
+        steps = start.col - dest.col;
+    }
+    if (sameRow && start.col < dest.col) {
+        dir = Direction.DOWN;
+        steps = dest.col - start.col;
+    }
+    if (!sameRow && start.row > dest.row) {
+        dir = Direction.LEFT;
+        steps = start.row - dest.row;
+    }
+    if (!sameRow && start.row < dest.row) {
+        dir = Direction.RIGHT;
+        steps = dest.row - start.row;
+    }
+    return { row: start.row, col: start.col, direction: dir, number: steps };
 }

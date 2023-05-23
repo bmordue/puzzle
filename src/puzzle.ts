@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
 import { svgGrid } from "./draw";
-import { Direction, Grid, GridSquare, isBlank } from "./grid";
+import { Direction, Grid, GridSquare, isBlank, isNotBlank, sameRowOrColumn, squareFromCoords } from "./grid";
 
 // random integer in 0..max-1
 function rnd(max: number) {
@@ -71,6 +71,59 @@ export type Coord = {
     row: number;
     col: number;
 };
+
+function includesByCoord(squares: GridSquare[], target: Coord): boolean {
+    return squares.filter((s) => s.col === target.col && s.row === target.row).length > 0;
+}
+
+function pathToGoalRec(grid: Grid, goal: Coord, start: Coord, targetSteps: number, currentPath: Coord[]): Coord[] {
+    console.log(`Finding path to goal: ${goal.row},${goal.col}; start: ${start.row},${start.col}`);
+    const pathStr = currentPath.map((c) => `(${c.row}, ${c.col})`).join(', ');
+    console.log(`${pathStr}\n`);
+
+    if (start.col === goal.col && start.row === goal.row) {
+        console.log(`found the goal!`);
+        return currentPath;
+    }
+
+    function notInCurrentPath(s: GridSquare) {
+        const c: Coord = { row: s.row!, col: s.col! }
+        return currentPath.indexOf(c) === -1;
+    }
+
+    const availableMoves = grid
+        .listSquares()
+        .filter((s) => sameRowOrColumn(s, start))
+        .filter((s) => !currentPath.includes({ row: s.row, col: s.col }));
+
+    console.log(`Available moves: ${availableMoves.length}; length of current path: ${currentPath.length}`);
+    if (currentPath.length > grid.columns * grid.rows) {
+        throw new Error('going round in circles');
+
+    }
+
+    if (availableMoves.length === 0) {
+        console.log(`couldn't find any moves from ${start.row},${start.col}`);
+        currentPath.pop();
+        return currentPath;
+    }
+
+    if (targetSteps < 2 && includesByCoord(availableMoves, goal)) {
+        currentPath.push(goal);
+        return currentPath;
+    }
+
+    const nextIndex = rnd(availableMoves.length);
+    const next = availableMoves[nextIndex];
+    if (!next) {
+        throw new Error('ruh roh!');
+    }
+    currentPath.push(next);
+
+    return pathToGoalRec(grid, goal, next, targetSteps, currentPath);
+}
+
+
 
 // TODO move this to Grid class...
 function pathToGoal(grid: Grid, goal: Coord, start: Coord, pathLength: number): Coord[] {
@@ -170,6 +223,7 @@ function straightToGoal(grid: Grid, goal: Coord, current: Coord, winningPath: Co
         grid.setNumber(current.row, current.col, Math.abs(offsetY));
 
         const next = applySteps(current.row, current.col, yDir, Math.abs(offsetY));
+
 
         winningPath.push({ row: next.row, col: next.col });
 
@@ -358,7 +412,15 @@ export function generate(rows: number, columns: number) {
     const winningIndex = rnd(countEdgeSquares(rows, columns));
     const winningStart = startPoint(rows, columns, winningIndex);
 
-    const winningPath: Coord[] = pathToGoal(grid, { row: goalRow, col: goalCol }, winningStart, pathLength);
+    let winningPath = [winningStart];
+
+    winningPath = pathToGoalRec(grid, { row: goalRow, col: goalCol }, winningStart, pathLength, winningPath);
+    winningPath.forEach((current, i, arr) => {
+        if (i < arr.length - 1) {
+            const sq = squareFromCoords(current, arr[i + 1]);
+            grid.setSquare(sq);
+        }
+    });
     writeFileSync("winning.svg", svgGrid(grid));
 
     console.log(winningPath.length);
@@ -378,5 +440,4 @@ export function generate(rows: number, columns: number) {
     return grid;
 }
 
-writeFileSync("complete.svg", svgGrid(generate(10, 10)));
-
+// writeFileSync("complete.svg", svgGrid(generate(10, 10)));

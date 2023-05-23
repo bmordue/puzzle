@@ -10,6 +10,7 @@ function main() {
     } catch {
         console.log("\nUsage: node built/app.js rows cols\n");
     }
+    console.log(`Generating grid: ${rows}x${cols}`);
     writeFileSync("complete.svg", svgGrid(generate(rows, cols)));
 }
 
