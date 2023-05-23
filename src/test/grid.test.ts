@@ -1,5 +1,5 @@
 import assert from "assert";
-import { Direction, Grid, squareFromCoords } from "../grid";
+import { Direction, Grid, pathIncludesCoord, squareFromCoords } from "../grid";
 import { exampleGrid } from "../util";
 
 
@@ -45,13 +45,12 @@ describe("grid", () => {
 
     it("should find a coord in a path", () => {
         const path = [{ row: 0, col: 0 }, { row: 1, col: 0 }, { row: 1, col: 1 }, { row: 0, col: 1 }];
-        const grid = new Grid(2, 2);
 
-        // const availableMoves = grid
-        // .listSquares()
-        // .filter((s) => !path.includes({ row: s.row, col: s.col }));
-
-        assert(path.includes({ row: 1, col: 1 }));
+        [0, 1].forEach((r) => {
+            [0, 1].forEach((c) => {
+                assert(pathIncludesCoord(path, { row: r, col: c }));
+            });
+        });
     });
 
 });

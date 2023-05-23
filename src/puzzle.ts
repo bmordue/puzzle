@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
 import { svgGrid } from "./draw";
-import { Direction, Grid, GridSquare, isBlank, isNotBlank, sameRowOrColumn, squareFromCoords } from "./grid";
+import { Direction, Grid, GridSquare, isBlank, isNotBlank, pathIncludesCoord, sameRowOrColumn, squareFromCoords } from "./grid";
 
 // random integer in 0..max-1
 function rnd(max: number) {
@@ -94,7 +94,7 @@ function pathToGoalRec(grid: Grid, goal: Coord, start: Coord, targetSteps: numbe
     const availableMoves = grid
         .listSquares()
         .filter((s) => sameRowOrColumn(s, start))
-        .filter((s) => !currentPath.includes({ row: s.row, col: s.col }));
+        .filter((s) => !pathIncludesCoord(currentPath, s));
 
     console.log(`Available moves: ${availableMoves.length}; length of current path: ${currentPath.length}`);
     if (currentPath.length > grid.columns * grid.rows) {
@@ -120,7 +120,7 @@ function pathToGoalRec(grid: Grid, goal: Coord, start: Coord, targetSteps: numbe
     }
     currentPath.push(next);
 
-    return pathToGoalRec(grid, goal, next, targetSteps, currentPath);
+    return pathToGoalRec(grid, goal, next, targetSteps--, currentPath);
 }
 
 

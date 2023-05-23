@@ -169,3 +169,7 @@ export function squareFromCoords(start: Coord, dest: Coord): GridSquare {
     }
     return { row: start.row, col: start.col, direction: dir, number: steps };
 }
+
+export function pathIncludesCoord(path: Coord[], coord: Coord): boolean {
+    return path.filter((c) => c.col === coord.col && c.row === coord.row).length > 0;
+}
