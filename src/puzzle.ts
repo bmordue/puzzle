@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
 import { svgGrid } from "./draw";
-import { Direction, Grid, GridSquare, isBlank, isNotBlank, pathIncludesCoord, sameRowOrColumn, squareFromCoords } from "./grid";
+import { Direction, Grid, GridSquare, isBlank, isNotBlank, notOnEdge, pathIncludesCoord, sameRowOrColumn, squareFromCoords } from "./grid";
 
 // random integer in 0..max-1
 function rnd(max: number) {
@@ -77,33 +77,28 @@ function includesByCoord(squares: GridSquare[], target: Coord): boolean {
 }
 
 function pathToGoalRec(grid: Grid, goal: Coord, start: Coord, targetSteps: number, currentPath: Coord[]): Coord[] {
-    console.log(`Finding path to goal: ${goal.row},${goal.col}; start: ${start.row},${start.col}`);
-    const pathStr = currentPath.map((c) => `(${c.row}, ${c.col})`).join(', ');
-    console.log(`${pathStr}\n`);
+    // console.log(`Finding path to goal: ${goal.row},${goal.col}; start: ${start.row},${start.col}`);
+    // const pathStr = currentPath.map((c) => `(${c.row}, ${c.col})`).join(', ');
+    // console.log(`${pathStr}\n`);
 
     if (start.col === goal.col && start.row === goal.row) {
-        console.log(`found the goal!`);
+        // console.log(`found the goal!`);
         return currentPath;
     }
 
-    function notInCurrentPath(s: GridSquare) {
-        const c: Coord = { row: s.row!, col: s.col! }
-        return currentPath.indexOf(c) === -1;
-    }
+    // function notInCurrentPath(s: GridSquare) {
+    //     const c: Coord = { row: s.row!, col: s.col! }
+    //     return currentPath.indexOf(c) === -1;
+    // }
 
     const availableMoves = grid
         .listSquares()
         .filter((s) => sameRowOrColumn(s, start))
+        .filter((s) => notOnEdge(grid, s))
         .filter((s) => !pathIncludesCoord(currentPath, s));
 
-    console.log(`Available moves: ${availableMoves.length}; length of current path: ${currentPath.length}`);
-    if (currentPath.length > grid.columns * grid.rows) {
-        throw new Error('going round in circles');
-
-    }
-
     if (availableMoves.length === 0) {
-        console.log(`couldn't find any moves from ${start.row},${start.col}`);
+        // console.log(`couldn't find any moves from ${start.row},${start.col}`);
         currentPath.pop();
         return currentPath;
     }
@@ -115,9 +110,9 @@ function pathToGoalRec(grid: Grid, goal: Coord, start: Coord, targetSteps: numbe
 
     const nextIndex = rnd(availableMoves.length);
     const next = availableMoves[nextIndex];
-    if (!next) {
-        throw new Error('ruh roh!');
-    }
+    // if (!next) {
+    //     throw new Error('ruh roh!');
+    // }
     currentPath.push(next);
 
     return pathToGoalRec(grid, goal, next, targetSteps--, currentPath);
@@ -349,7 +344,7 @@ function fillBlanks(grid: Grid, winningPath: Coord[]) {
     grid.listSquares().filter(isBlank).forEach((sq) => {
         const dir = randomDirection();
         grid.setDirection(sq.row, sq.col, dir);
-        let destCandidates = [];
+        let destCandidates: GridSquare[] = [];
         let i; let dest;
         let dirPredicate = (x: GridSquare) => false;
         let destNumber = (x: GridSquare) => 0;
@@ -378,12 +373,17 @@ function fillBlanks(grid: Grid, winningPath: Coord[]) {
         }
         destCandidates = grid
             .listSquares()
-            .filter(dirPredicate).filter(isBlank);
+            .filter(dirPredicate)
+            .filter(isBlank)
         if (destCandidates.length == 0) {
             grid.setNumber(sq.row, sq.col, exitNumber);
         } else {
             i = rnd(destCandidates.length);
             dest = destCandidates[i];
+            console.log(`current: (${sq.row}, ${sq.col}); dest: (${dest.row}, ${dest.col}) - ${dest.number} ${dest.direction}`);
+            if (pathIncludesCoord(winningPath, { row: dest.row!, col: dest.col! })) {
+                console.log("candidate for filling blanks is on the winning path");
+            }
             grid.setNumber(sq.row, sq.col, destNumber(dest));
         }
 
@@ -406,7 +406,7 @@ export function generate(rows: number, columns: number) {
     // TODO: come up with a useful heuristic for target path length
     const pathLength = 6;
 
-    console.log(`Grid size ${rows}x${columns}`);
+    // console.log(`Grid size ${rows}x${columns}`);
 
     // pick a winning start square and path to goal
     const winningIndex = rnd(countEdgeSquares(rows, columns));

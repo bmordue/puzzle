@@ -1,5 +1,5 @@
 import assert from "assert";
-import { Direction, Grid, pathIncludesCoord, squareFromCoords } from "../grid";
+import { Direction, Grid, notOnEdge, pathIncludesCoord, squareFromCoords } from "../grid";
 import { exampleGrid } from "../util";
 
 
@@ -51,6 +51,21 @@ describe("grid", () => {
                 assert(pathIncludesCoord(path, { row: r, col: c }));
             });
         });
+    });
+
+    it("should identify whether a square is on the edge of the grid", () => {
+        const grid = new Grid(3, 3);
+        assert(notOnEdge(grid, { row: 1, col: 1 }));
+        assert(!notOnEdge(grid, { row: 1, col: 2 }));
+
+    });
+
+    it("should list squares not on edge", () => {
+        const grid = new Grid(5, 5);
+        const squares = grid.listSquares().filter((s) => notOnEdge(grid, s));
+        assert.equal(squares.length, 9);
+        const squaresStr = squares.map(s => `(${s.row}, ${s.col})`).join(', ');
+        assert.equal(squaresStr, '(1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (2, 3), (3, 1), (3, 2), (3, 3)');
     });
 
 });

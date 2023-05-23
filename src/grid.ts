@@ -130,10 +130,11 @@ export class Grid {
     public getSize(): Coord {
         return { row: this.rows, col: this.columns };
     }
+
 }
 
 export function isBlank(square: GridSquare) {
-    return square.direction === Direction.NONE && square.number !== 0;
+    return square.direction === Direction.NONE && square.number === 1;
 }
 
 export function isNotBlank(square: GridSquare) {
@@ -172,4 +173,8 @@ export function squareFromCoords(start: Coord, dest: Coord): GridSquare {
 
 export function pathIncludesCoord(path: Coord[], coord: Coord): boolean {
     return path.filter((c) => c.col === coord.col && c.row === coord.row).length > 0;
+}
+
+export function notOnEdge(grid: Grid, c: Coord): boolean {
+    return c.row !== 0 && c.col !== 0 && c.row !== grid.rows - 1 && c.col !== grid.columns - 1;
 }
