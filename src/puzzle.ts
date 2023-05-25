@@ -188,7 +188,7 @@ function nextMoveToGoal(grid: Grid, start: Coord, current: Coord, winningPath: C
             }
         }
         // avoid loops
-        if (winningPath.includes(candidate)) {
+        if (includesByCoord(winningPath, candidate)) {
             badPath = true;
         }
 
@@ -330,7 +330,7 @@ function isValidMoveToExit(current: Coord, goal: Coord, candidate: { row: number
         }
     }
 
-    if (winningPath.includes(candidate)) {
+    if (includesByCoord(winningPath, candidate)) {
         // do not join the winning path!
         validMove = false;
     }
