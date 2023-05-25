@@ -188,7 +188,7 @@ function nextMoveToGoal(grid: Grid, start: Coord, current: Coord, winningPath: C
             }
         }
         // avoid loops
-        if (winningPath.indexOf((c) => c.row === candidate.row && c.col === candidate.col) > -1)) {
+       if (winningPath.fíndIndex((c :Coord) => c.row === candidate.row && c.col === candidate.col) > -1)) {
             badPath = true;
         }
 
@@ -330,7 +330,7 @@ function isValidMoveToExit(current: Coord, goal: Coord, candidate: { row: number
         }
     }
 
-    if (winningPath.indexOf(c => c.row === candidate.row && c.col === candidate.col) > -1) {
+    if (winningPath.findIndex((c: Coord) => c.row === candidate.row && c.col === candidate.col) > -1) {
         // do not join the winning path!
         validMove = false;
     }
