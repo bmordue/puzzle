@@ -188,7 +188,7 @@ function nextMoveToGoal(grid: Grid, start: Coord, current: Coord, winningPath: C
             }
         }
         // avoid loops
-       if (winningPath.findIndex((c :Coord) => c.row === candidate.row && c.col === candidate.col) > -1)) {
+       if (winningPath.findIndex((c :Coord) => c.row === candidate.row && c.col === candidate.col) > -1) {
             badPath = true;
         }
 
