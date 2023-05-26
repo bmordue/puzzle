@@ -1,4 +1,3 @@
-import { Dir } from "fs";
 import { Coord } from "./puzzle";
 
 export enum Direction {
@@ -62,9 +61,6 @@ export class Grid {
 
     public setNumber(row: number, column: number, number: number): void {
         const square = this.grid[row][column];
-        // if (square.number !== 1) {
-        //     console.log(`Eek: overwriting existing direction (${row},${column}: ${square.number} ${square.direction})`);
-        // }
         square.number = number;
     }
 
