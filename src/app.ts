@@ -9,7 +9,9 @@ function main() {
         cols = parseInt(process.argv[3]);
     } catch {
         console.log("\nUsage: node built/app.js rows cols\n");
+        process.exit(1);
     }
+    console.log(`Generating grid: ${rows}x${cols}`);
     writeFileSync("complete.svg", svgGrid(generate(rows, cols)));
 }
 
