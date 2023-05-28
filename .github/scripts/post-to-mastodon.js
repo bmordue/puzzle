@@ -4,7 +4,7 @@ const Mastodon = require('mastodon-api');
 const accessToken = process.argv[2];
 const filePath = process.argv[3];
 
-const instanceURL = 'https://mastodon.instance.com'; // Replace with your Mastodon instance URL
+const instanceURL = 'https://mastodon.scot';
 
 const mastodon = new Mastodon({
     access_token: accessToken,
@@ -18,7 +18,7 @@ mastodon.post('media', { file: mediaData })
         const attachment = response.data;
 
         mastodon.post('statuses', {
-            status: 'Check out this image!',
+            status: 'New puzzle!',
             media_ids: [attachment.id],
         })
             .catch(error => console.error('Error posting status:', error));
