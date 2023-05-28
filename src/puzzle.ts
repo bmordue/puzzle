@@ -185,7 +185,6 @@ export function generate(rows: number, columns: number) {
             grid.setSquare(sq);
         }
     });
-    writeFileSync("winning.svg", svgGrid(grid));
 
     console.log(winningPath.length);
     console.log(winningPath.map((c) => `(${c.row}, ${c.col})`).join(', '));
