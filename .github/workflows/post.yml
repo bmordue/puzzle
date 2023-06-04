@@ -12,14 +12,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Use Node.js 18
-        uses: actions/setup-node@v3
+      - name: Post to Mastodon
+        uses: mastodon/share@v1
         with:
-          node-version: 18
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm install mastodon-api
-
-      - name: Run script
-        run: node .github/scripts/post-to-mastodon.js ${{ secrets.MASTODON_ACCESS_TOKEN }} ${{ github.workspace }}/docs/grid.svg
+          instance-url: https://mastodon.scot
+          access-token: ${{ secrets.MASTODON_ACCESS_TOKEN }}
+          file: docs/grid.svg
