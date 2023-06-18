@@ -23,4 +23,4 @@ jobs:
         run: npm install mastodon-api
 
       - name: Run script
-        run: node .github/scripts/post-to-mastodon.js ${{ secrets.MASTODON_ACCESS_TOKEN }} ${{ github.workspace }}/docs/grid.svg
+        run: node .github/scripts/post-to-mastodon.js ${{ secrets.MASTODON_ACCESS_TOKEN }} ${{ github.workspace }}/png/complete.png
