@@ -25,7 +25,7 @@ jobs:
 
       - name: Convert SVG to PNG
         run: |
-          mkdir png
+          mkdir -p png
           for file in *.svg; do
             filename="${file%.*}"
             cairosvg "$file" -o "png/${filename}.png"
