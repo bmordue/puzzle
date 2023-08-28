@@ -1,21 +1,30 @@
 import { Direction } from "./grid";
 
+const dirs = 'RULD';
 
-function spiral(length: number) {
-    const dirs = 'RULD';
-    let i = 0;
+
+function doSomething(dir: number, side: number, cellCount: number) {
+    console.log(`${dirs[dir]}${side}`);
+}
+
+
+function spiral(max: number) {
+    let x = 0;
+    let y = 0;
+    let steps = 0;
     let side = 0; // in grid cells
+    let cellCount = 0;
     let seq = '';
-    while (i < length) {
-        let dir = i % 4; // R U L D
-        let incSide = i % 2;
+    while (steps < max) {
+        let dir = steps % 4; // R U L D
+        let incSide = steps % 2;
         if (incSide == 0) {
             side++;
         }
-        seq += `${dirs[i % 4]}${side} `;
-        i++;
+        cellCount += side;
+        doSomething(dir, side, cellCount)
+        steps++;
     }
-    console.log(seq);
 }
 
 spiral(12);
