@@ -171,7 +171,9 @@ export function generate(rows: number, columns: number) {
     function calculatePathLength(rows: number, columns: number): number {
         // Add your implementation for the heuristic here
         // Return the calculated path length
-        return 6; // Placeholder value, replace with the actual calculated path length
+        // Add your implementation for the heuristic here
+        // Return the calculated path length
+        return calculatePathLength(rows, columns);
     }
 
     // pick a winning start square and path to goal
