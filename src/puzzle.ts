@@ -166,8 +166,13 @@ export function generate(rows: number, columns: number) {
     grid.setNumber(goalRow, goalCol, 0);
 
 
-    // TODO: come up with a useful heuristic for target path length
-    const pathLength = 6;
+    const pathLength = calculatePathLength(rows, columns);
+    
+    function calculatePathLength(rows: number, columns: number): number {
+        // Add your implementation for the heuristic here
+        // Return the calculated path length
+        return 6; // Placeholder value, replace with the actual calculated path length
+    }
 
     // pick a winning start square and path to goal
     const winningIndex = rnd(countEdgeSquares(rows, columns));
