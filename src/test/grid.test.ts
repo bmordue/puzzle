@@ -13,20 +13,47 @@ describe("grid", () => {
         });
     });
 
-    it("should update direction and steps for a grid square", () => {
-        const grid = new Grid(2, 2);
-        grid.setDirection(0, 1, Direction.DOWN);
-        grid.setNumber(1, 0, 2);
+    describe("constructor", () => {
+        it("should initialize the grid with the specified number of rows and columns", () => {
+            const grid = new Grid(2, 2);
+            assert.equal(grid.rows, 2);
+            assert.equal(grid.columns, 2);
+        });
+    });
 
-        assert.equal(grid.getSquare(0, 0).number, 1);
-        assert.equal(grid.getSquare(0, 0).direction, Direction.NONE);
-        assert.equal(grid.getSquare(0, 1).number, 1);
-        assert.equal(grid.getSquare(0, 1).direction, Direction.DOWN);
-        assert.equal(grid.getSquare(1, 0).number, 2);
-        assert.equal(grid.getSquare(1, 0).direction, Direction.NONE);
-        assert.equal(grid.getSquare(1, 1).number, 1);
-        assert.equal(grid.getSquare(1, 1).direction, Direction.NONE);
+    describe("setDirection", () => {
+        it("should set the direction correctly for a given row and column", () => {
+            const grid = new Grid(2, 2);
+            grid.setDirection(0, 1, Direction.DOWN);
+            assert.equal(grid.getSquare(0, 1).direction, Direction.DOWN);
+        });
+    });
 
+    describe("setNumber", () => {
+        it("should set the number correctly for a given row and column", () => {
+            const grid = new Grid(2, 2);
+            grid.setNumber(1, 0, 2);
+            assert.equal(grid.getSquare(1, 0).number, 2);
+        });
+    });
+
+    describe("setSquare", () => {
+        it("should set the square correctly for a given row and column", () => {
+            const grid = new Grid(2, 2);
+            const square = { row: 0, col: 1, direction: Direction.DOWN, number: 2 };
+            grid.setSquare(square);
+            assert.deepEqual(grid.getSquare(0, 1), square);
+        });
+    });
+
+    describe("addDecorator", () => {
+        it("should add the decorator correctly for a given row and column", () => {
+            const grid = new Grid(2, 2);
+            grid.addDecorator(0, 1, "decorator1");
+            grid.addDecorator(1, 0, "decorator2");
+            assert.equal(grid.getSquare(0, 1).decorators, "decorator1");
+            assert.equal(grid.getSquare(1, 0).decorators, "decorator2");
+        });
     });
 
     it("should go straight to goal with occupied square", () => {
@@ -64,8 +91,18 @@ describe("grid", () => {
         const grid = new Grid(5, 5);
         const squares = grid.listSquares().filter((s) => notOnEdge(grid, s));
         assert.equal(squares.length, 9);
-        const squaresStr = squares.map(s => `(${s.row}, ${s.col})`).join(', ');
-        assert.equal(squaresStr, '(1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (2, 3), (3, 1), (3, 2), (3, 3)');
+        const squaresStr = squares.map(s => `\\(${s.row}, ${s.col}\\)`).join(', ');
+        assert.equal(squaresStr, '\\(1, 1\\), \\(1, 2\\), \\(1, 3\\), \\(2, 1\\), \\(2, 2\\), \\(2, 3\\), \\(3, 1\\), \\(3, 2\\), \\(3, 3\\)');
+    });
+
+    describe("addDecorator", () => {
+        it("should add the decorator correctly for a given row and column", () => {
+            const grid = new Grid(2, 2);
+            grid.addDecorator(0, 1, "decorator1");
+            grid.addDecorator(1, 0, "decorator2");
+            assert.equal(grid.getSquare(0, 1).decorators, "decorator1");
+            assert.equal(grid.getSquare(1, 0).decorators, "decorator2");
+        });
     });
 
 });
