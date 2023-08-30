@@ -8,7 +8,9 @@
   "scripts": {
     "prestart": "npx tsc",
     "start": "node built/app.js 10 10",
-    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha"
+    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha",
+    "test:coverage": "nyc --reporter=lcov --reporter=text mocha",
+    "report:coverage": "nyc report --reporter=lcov > coverage.lcov && sonar-scanner"
   },
   "directories": {
     "test": "./test"
