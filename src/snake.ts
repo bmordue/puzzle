@@ -4,7 +4,6 @@ function spiral(max: number) {
   let pos = { x: 0, y: 0 };
   let steps = 0;
   let sideLen = 0; // in grid cells
-  let cellCount = 0;
 
   while (steps < max) {
     let dir = steps % 4; // R U L D
@@ -12,7 +11,6 @@ function spiral(max: number) {
     if (incSide == 0) {
       sideLen++;
     }
-    cellCount += sideLen;
     steps++;
 
     // do something
@@ -46,7 +44,7 @@ function applyDir(currX: number, currY: number, dir: number) {
 const tokens =
   "ABCAAABACBABBBCCACBCCAAAAABAACABAABBABCACAACBACCBAABABBACBBABBBBBCCAACABCACCBACBBCBCCCACCBCCC"; // up to 3 digits
 function tokenFor(i: number) {
-  return tokens[i];
+  return tokens.charAt(i);
 }
 
 function unwrap() {
