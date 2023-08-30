@@ -19,7 +19,7 @@ mastodon.post('media', { file: mediaData })
 
         mastodon.post('statuses', {
             status: 'New puzzle!',
-            media_ids: [attachment.id],
+            media_ids: [attachment],
         })
             .catch(error => console.error('Error posting status:', error));
     })

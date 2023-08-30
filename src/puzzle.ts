@@ -1,10 +1,7 @@
-import { writeFileSync } from "fs";
-import { svgGrid } from "./draw";
 import { Direction, Grid, GridSquare, isBlank, notOnEdge, pathIncludesCoord, sameRowOrColumn, squareFromCoords } from "./grid";
 
 // random integer in 0..max-1
 function rnd(max: number) {
-
     return Math.floor(Math.random() * max);
 }
 
