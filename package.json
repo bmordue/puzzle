@@ -8,7 +8,7 @@
   "scripts": {
     "prestart": "npx tsc",
     "start": "node built/app.js 10 10",
-    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha"
+    "test": "mocha"
   },
   "directories": {
     "test": "./test"
