@@ -1,26 +1,16 @@
 {
   "name": "puzzle",
   "version": "1.0.0",
-  "description": "",
-  "engines": {
-    "node": ">=18.0.0 <19.0.0"
-  },
   "scripts": {
     "prestart": "npx tsc",
     "start": "node built/app.js 10 10",
-    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha",
-    "test:coverage": "nyc --reporter=lcov --reporter=text mocha",
-    "report:coverage": "nyc report --reporter=lcov > coverage.lcov && sonar-scanner"
+    "test:coverage": "nyc --reporter=lcov --reporter=text mocha"
   },
-  "directories": {
-    "test": "./test"
-  },
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.16.3",
     "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   }
