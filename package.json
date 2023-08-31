@@ -4,7 +4,7 @@
   "scripts": {
     "prestart": "npx tsc",
     "start": "node built/app.js 10 10",
-    "test:coverage": "nyc --reporter=lcov --reporter=text mocha"
+    "test": "nyc --reporter=lcov --reporter=text mocha"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",
