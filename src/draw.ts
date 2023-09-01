@@ -1,7 +1,13 @@
 import { Grid, Direction } from "./grid";
 
 export function svgGrid(grid: Grid) {
+    if (!grid) {
+        throw new Error("Invalid grid parameter. Grid must be provided.");
+    }
 
+    if (!(grid instanceof Grid)) {
+        throw new Error("Invalid grid parameter. Grid must be an instance of the Grid class.");
+    }
     const rows = grid.rows;
     const cols = grid.columns;
     // SVG parameters
@@ -58,6 +64,12 @@ export function svgGrid(grid: Grid) {
 }
 
 function svgArrow(cellSize: number, direction: Direction, centerX: number, y: number, x: number, centerY: number) {
+    if (![Direction.LEFT, Direction.RIGHT, Direction.UP, Direction.DOWN].includes(direction)) {
+        throw new Error("Invalid direction parameter. Direction must be one of the valid Direction values.");
+    }
+    if (typeof direction !== "number") {
+        throw new Error("Invalid direction parameter. Direction must be a number.");
+    }
     let arrowSvg = "";
     let points = "";
     const arrowSize = cellSize / 4;
