@@ -83,7 +83,7 @@ describe("grid", () => {
     const grid = new Grid(2, 2);
     grid.setDirection(0, 1, Direction.DOWN);
     grid.setNumber(1, 0, 2);
-    const expected = "0 1\n2 1";
+    const expected = "1 none, 1 down, \n2 none, 1 none, \n";
     assert.equal(grid.toString(), expected);
   });
 
@@ -103,12 +103,37 @@ describe("grid", () => {
   });
 
   // Additional test case for squareFromCoords
-  it("should return the correct square object given two coordinates", () => {
+  it("should error if start to dest is not a straight line", () => {
     const coords1 = { row: 2, col: 3 };
     const coords2 = { row: 1, col: 1 };
     const expected = { direction: Direction.UP, number: 2 };
+    assert.throws(() => squareFromCoords(coords1, coords2));
+  });
+
+  it("should find straight line on same row", () => {
+    const coords1 = { row: 1, col: 0 };
+    const coords2 = { row: 1, col: 2 };
+    const expected = {
+      row: 1,
+      col: 0,
+      direction: Direction.DOWN,
+      number: 2
+    };
     assert.deepEqual(squareFromCoords(coords1, coords2), expected);
   });
+
+  it("should find straight line on same column", () => {
+    const coords1 = { row: 0, col: 1 };
+    const coords2 = { row: 2, col: 1 };
+    const expected = {
+      row: 0,
+      col: 1,
+      direction: Direction.RIGHT,
+      number: 2
+    };
+    assert.deepEqual(squareFromCoords(coords1, coords2), expected);
+  });
+
 
   it("should identify whether a square is on the edge of the grid", () => {
     const grid = new Grid(3, 3);
@@ -133,10 +158,8 @@ describe("grid", () => {
     const squares = grid.listSquares().filter((s) => notOnEdge(grid, s));
     assert.equal(squares.length, 9);
     const squaresStr = squares.map((s) => `(${s.row}, ${s.col})`).join(", ");
-    assert.equal(
-      squaresStr,
-      "\\(1, 1\\), \\(1, 2\\), \\(1, 3\\), \\(2, 1\\), \\(2, 2\\), \\(2, 3\\), \\(3, 1\\), \\(3, 2\\), \\(3, 3\\)"
-    );
+    const expected = "(1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (2, 3), (3, 1), (3, 2), (3, 3)";
+    assert.equal(squaresStr, expected);
   });
 
   // Additional test case for notOnEdge
