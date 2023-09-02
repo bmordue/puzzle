@@ -65,10 +65,7 @@ export function svgGrid(grid: Grid) {
 
 function svgArrow(cellSize: number, direction: Direction, centerX: number, y: number, x: number, centerY: number) {
     if (![Direction.LEFT, Direction.RIGHT, Direction.UP, Direction.DOWN].includes(direction)) {
-        throw new Error("Invalid direction parameter. Direction must be one of the valid Direction values.");
-    }
-    if (typeof direction !== "number") {
-        throw new Error("Invalid direction parameter. Direction must be a number.");
+        return '';
     }
     let arrowSvg = "";
     let points = "";
