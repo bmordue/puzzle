@@ -2,5 +2,6 @@ node_modules/
 built/
 .vscode/
 svgs/
-
 .env
+.nyc_output/
+coverage/
