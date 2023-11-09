@@ -10,8 +10,7 @@ const config = {
     spec: [ "built/test" ]
   },
   dashboard: {
-    project: "github.com/bmordue/puzzle",
-    version: "main"
+    project: "github.com/bmordue/puzzle"
   }
 };
 
