@@ -3,6 +3,5 @@ built/
 .vscode/
 svgs/
 .env
-
 .nyc_output/
 coverage/
