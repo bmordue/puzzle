@@ -65,9 +65,6 @@ describe("grid", () => {
     const grid = new Grid(2, 2);
     grid.setDirection(0, 1, Direction.DOWN);
     grid.setNumber(1, 0, 2);
-    console.log(grid.toString());
-
-    // Additional test case for setNumber
     grid.setNumber(0, 0, 3);
     assert.equal(grid.getSquare(0, 0).number, 3);
   });
@@ -78,7 +75,6 @@ describe("grid", () => {
     assert.equal(sq.number, 3);
   });
 
-  // Additional test case for toString
   it("should return the correct string representation of the grid", () => {
     const grid = new Grid(2, 2);
     grid.setDirection(0, 1, Direction.DOWN);
@@ -102,11 +98,9 @@ describe("grid", () => {
     });
   });
 
-  // Additional test case for squareFromCoords
   it("should error if start to dest is not a straight line", () => {
     const coords1 = { row: 2, col: 3 };
     const coords2 = { row: 1, col: 1 };
-    const expected = { direction: Direction.UP, number: 2 };
     assert.throws(() => squareFromCoords(coords1, coords2));
   });
 
@@ -141,7 +135,6 @@ describe("grid", () => {
     assert(!notOnEdge(grid, { row: 1, col: 2 }));
   });
 
-  // Additional test case for pathIncludesCoord
   it("should correctly identify whether a coordinate is present in a path", () => {
     const path = [
       { row: 0, col: 0 },
@@ -162,7 +155,6 @@ describe("grid", () => {
     assert.equal(squaresStr, expected);
   });
 
-  // Additional test case for notOnEdge
   it("should correctly identify whether a square is on the edge of the grid", () => {
     const grid = new Grid(3, 3);
     assert(notOnEdge(grid, { row: 1, col: 1 }));
