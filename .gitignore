@@ -5,3 +5,7 @@ svgs/
 .env
 .nyc_output/
 coverage/
+
+# stryker temp files
+.stryker-tmp
+reports/
