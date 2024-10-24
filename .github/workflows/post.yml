@@ -2,8 +2,8 @@ name: Post to Mastodon
 
 on:
   workflow_dispatch:
-  # schedule:
-  #   - cron: "0 0 * * 0"  # Executes the job at midnight UTC every Sunday
+  schedule:
+    - cron: "0 0 * * 0"  # Executes the job at midnight UTC every Sunday
 
 jobs:
   post:
