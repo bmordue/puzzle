@@ -15,6 +15,11 @@ const mediaData = fs.readFileSync(filePath);
 
 mastodon.post('v2/media', { file: mediaData })
     .then(response => {
+        if (response.statusCode != 200) {
+            // don't expect 202 for image attachment
+            console.error("Failed to post media attachment");
+            return;
+        }
         
         const attachment = response.data;
 
