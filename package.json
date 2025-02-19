@@ -12,7 +12,7 @@
     "@stryker-mutator/mocha-runner": "^7.3.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.16.3",
-    "mocha": "^10.2.0",
+    "mocha": "^10.8.2",
     "nyc": "^15.1.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
