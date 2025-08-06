@@ -8,8 +8,8 @@
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
-    "@stryker-mutator/core": "^7.3.0",
-    "@stryker-mutator/mocha-runner": "^7.3.0",
+    "@stryker-mutator/core": "^9.0.1",
+    "@stryker-mutator/mocha-runner": "^9.0.1",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.16.3",
     "mocha": "^10.8.2",
