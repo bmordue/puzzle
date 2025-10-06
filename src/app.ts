@@ -26,10 +26,16 @@ function main() {
     
     try {
         if (process.argv[2]) {
-            rows = parseInt(process.argv[2]);
+            if (!/^\d+$/.test(process.argv[2].trim())) {
+                throw new Error("Row argument must be a positive integer");
+            }
+            rows = parseInt(process.argv[2], 10);
         }
         if (process.argv[3]) {
-            cols = parseInt(process.argv[3]);
+            if (!/^\d+$/.test(process.argv[3].trim())) {
+                throw new Error("Column argument must be a positive integer");
+            }
+            cols = parseInt(process.argv[3], 10);
         }
         
         if (isNaN(rows) || isNaN(cols)) {
