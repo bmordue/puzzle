@@ -2,7 +2,7 @@
   "name": "puzzle",
   "version": "1.0.0",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=20.0.0"
   },
   "scripts": {
     "prestart": "npx tsc",
@@ -13,8 +13,10 @@
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@stryker-mutator/core": "^9.0.1",
     "@stryker-mutator/mocha-runner": "^9.0.1",
+    "@types/chai": "^5.2.2",
     "@types/mocha": "^10.0.10",
     "@types/node": "^24.2.0",
+    "chai": "^6.0.1",
     "mocha": "^11.7.1",
     "nyc": "^17.1.0",
     "ts-node": "^10.9.2",
