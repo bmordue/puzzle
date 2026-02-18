@@ -1,4 +1,5 @@
 import { Direction, Grid, GridSquare, isBlank, notOnEdge, pathIncludesCoord, sameRowOrColumn, squareFromCoords } from "./grid";
+import { getConfig } from "./config";
 
 // random integer in 0..max-1
 function rnd(max: number) {
@@ -158,6 +159,7 @@ function fillBlanks(grid: Grid, winningPath: Coord[]) {
 
 
 export function generate(rows: number, columns: number) {
+    const config = getConfig();
     let grid = new Grid(rows, columns);
 
     // pick a goal square
@@ -165,9 +167,8 @@ export function generate(rows: number, columns: number) {
     const goalCol = rnd(rows - 2) + 1; // not on edge
     grid.setNumber(goalRow, goalCol, 0);
 
-
-    // TODO: come up with a useful heuristic for target path length
-    const pathLength = 6;
+    // Use configured path length instead of hard-coded value
+    const pathLength = config.generation.pathLength;
 
     // pick a winning start square and path to goal
     const winningIndex = rnd(countEdgeSquares(rows, columns));
