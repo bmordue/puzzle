@@ -14,28 +14,31 @@ function countEdgeSquares(rows: number, columns: number) {
 }
 
 export function startPoint(rows: number, columns: number, index: number): Coord {
-    let x;
-    let y;
-    if (index < columns) {
-        x = index;
-        y = 0;
+    // Left edge, top to bottom
+    if (index < rows) {
+        return { row: index, col: 0 };
     }
-    if (index >= columns && index < columns + rows - 1) {
-        x = columns - 1;
-        y = index - columns + 1;
+    index -= rows;
+
+    // Bottom edge, left to right
+    if (index < columns - 1) {
+        return { row: rows - 1, col: index + 1 };
     }
-    if (index >= columns + rows - 1 && index < 2 * columns + rows - 3) {
-        x = 2 * columns + rows - 3 - index;
-        y = rows - 1;
+    index -= (columns - 1);
+
+    // Right edge, bottom to top
+    if (index < rows - 1) {
+        return { row: rows - 2 - index, col: columns - 1 };
     }
-    if (index >= 2 * columns + rows - 3) {
-        x = 0;
-        y = 2 * columns + 2 * rows - 4 - index;
+    index -= (rows - 1);
+
+    // Top edge, right to left
+    if (index < columns - 2) {
+        return { row: 0, col: columns - 2 - index };
     }
 
-    if (x == undefined) x = -1;
-    if (y == undefined) y = -1;
-    return { row: x, col: y };
+    // Should not be reached
+    return { row: -1, col: -1 };
 }
 
 function randomDirection(): Direction {
