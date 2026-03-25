@@ -63,7 +63,6 @@ describe('config', () => {
         it('should handle partial overrides within sections', () => {
             const config = getConfig({
                 generation: {
-                    ...DEFAULT_CONFIG.generation,
                     pathLength: 10
                 }
             });
@@ -71,6 +70,21 @@ describe('config', () => {
             expect(config.generation.pathLength).to.equal(10);
             // Other generation settings should remain default
             expect(config.generation.defaultSize).to.deep.equal(DEFAULT_CONFIG.generation.defaultSize);
+            expect(config.generation.maxGridSize).to.equal(DEFAULT_CONFIG.generation.maxGridSize);
+        });
+
+        it('should handle partial overrides of nested objects', () => {
+            const config = getConfig({
+                generation: {
+                    defaultSize: { rows: 10 }
+                }
+            });
+
+            expect(config.generation.defaultSize.rows).to.equal(10);
+            // cols should still be the default, not lost
+            expect(config.generation.defaultSize.cols).to.equal(DEFAULT_CONFIG.generation.defaultSize.cols);
+            // Sibling fields in generation should remain default
+            expect(config.generation.pathLength).to.equal(DEFAULT_CONFIG.generation.pathLength);
             expect(config.generation.maxGridSize).to.equal(DEFAULT_CONFIG.generation.maxGridSize);
         });
     });

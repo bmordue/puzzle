@@ -2,6 +2,37 @@
  * Configuration settings for the puzzle generator
  */
 
+/**
+ * Recursively makes all properties optional, including nested objects.
+ */
+export type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
+};
+
+/**
+ * Deep-merges `override` into `base`, recursively merging nested objects.
+ */
+function deepMerge<T extends object>(base: T, override: DeepPartial<T>): T {
+  const result = { ...base } as T;
+  for (const key of Object.keys(override) as Array<keyof T>) {
+    const overrideVal = override[key];
+    const baseVal = base[key];
+    if (
+      overrideVal !== undefined &&
+      overrideVal !== null &&
+      typeof overrideVal === 'object' &&
+      !Array.isArray(overrideVal) &&
+      typeof baseVal === 'object' &&
+      baseVal !== null
+    ) {
+      result[key] = deepMerge(baseVal as object, overrideVal as DeepPartial<object>) as T[keyof T];
+    } else if (overrideVal !== undefined) {
+      result[key] = overrideVal as T[keyof T];
+    }
+  }
+  return result;
+}
+
 export interface PuzzleConfig {
   generation: {
     defaultSize: {
@@ -47,22 +78,14 @@ export const DEFAULT_CONFIG: PuzzleConfig = {
 };
 
 /**
- * Get configuration with optional overrides
- * @param overrides - Partial configuration to override defaults
+ * Get configuration with optional deep-partial overrides.
+ * Nested objects are merged recursively, so partial overrides
+ * (e.g. only `defaultSize.rows`) preserve sibling values.
+ * @param overrides - Deep-partial configuration to override defaults
  */
-export function getConfig(overrides?: Partial<PuzzleConfig>): PuzzleConfig {
-  return {
-    generation: {
-      ...DEFAULT_CONFIG.generation,
-      ...overrides?.generation,
-    },
-    rendering: {
-      ...DEFAULT_CONFIG.rendering,
-      ...overrides?.rendering,
-    },
-    output: {
-      ...DEFAULT_CONFIG.output,
-      ...overrides?.output,
-    },
-  };
+export function getConfig(overrides?: DeepPartial<PuzzleConfig>): PuzzleConfig {
+  if (!overrides) {
+    return { ...DEFAULT_CONFIG, generation: { ...DEFAULT_CONFIG.generation, defaultSize: { ...DEFAULT_CONFIG.generation.defaultSize } } };
+  }
+  return deepMerge(DEFAULT_CONFIG, overrides);
 }
