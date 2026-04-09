@@ -5,6 +5,9 @@ on:
     paths:
       - '**.svg'
 
+permissions:
+  contents: write
+
 jobs:
   convert-svg-to-png:
     runs-on: ubuntu-latest

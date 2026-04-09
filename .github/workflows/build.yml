@@ -3,6 +3,9 @@
 
 name: Node.js CI
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [ "main" ]
@@ -17,7 +20,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [22.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -41,7 +44,7 @@ jobs:
       - name: Use Node.js 18
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 22.x
           cache: 'npm'
       - run: npm ci
       - run: npm test
