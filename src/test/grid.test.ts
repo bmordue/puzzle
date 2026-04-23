@@ -170,4 +170,34 @@ describe("grid", () => {
       assert.equal(grid.getSquare(1, 0).decorators, "decorator2");
     });
   });
+
+  describe("distanceToEdge", () => {
+    it("should return correct distance to edge for all directions", () => {
+      const grid = new Grid(5, 5);
+      // center is (2, 2)
+      assert.equal(grid.distanceToEdge(2, 2, Direction.UP), 2);
+      assert.equal(grid.distanceToEdge(2, 2, Direction.DOWN), 2);
+      assert.equal(grid.distanceToEdge(2, 2, Direction.LEFT), 2);
+      assert.equal(grid.distanceToEdge(2, 2, Direction.RIGHT), 2);
+
+      // (1, 3) -> col 1, row 3
+      assert.equal(grid.distanceToEdge(1, 3, Direction.UP), 3);
+      assert.equal(grid.distanceToEdge(1, 3, Direction.DOWN), 1);
+      assert.equal(grid.distanceToEdge(1, 3, Direction.LEFT), 1);
+      assert.equal(grid.distanceToEdge(1, 3, Direction.RIGHT), 3);
+    });
+
+    it("should return 0 when already on the edge", () => {
+      const grid = new Grid(5, 5);
+      assert.equal(grid.distanceToEdge(0, 0, Direction.UP), 0);
+      assert.equal(grid.distanceToEdge(0, 0, Direction.LEFT), 0);
+      assert.equal(grid.distanceToEdge(4, 4, Direction.DOWN), 0);
+      assert.equal(grid.distanceToEdge(4, 4, Direction.RIGHT), 0);
+    });
+
+    it("should return 0 for Direction.NONE", () => {
+      const grid = new Grid(5, 5);
+      assert.equal(grid.distanceToEdge(2, 2, Direction.NONE), 0);
+    });
+  });
 });
