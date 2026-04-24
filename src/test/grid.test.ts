@@ -26,6 +26,28 @@ describe("grid", () => {
     });
   });
 
+  describe("clone", () => {
+    it("should correctly clone a grid", () => {
+      const grid = new Grid(2, 2);
+      grid.setDirection(0, 0, Direction.RIGHT);
+      grid.setNumber(0, 0, 1);
+      grid.setDirection(0, 1, Direction.DOWN);
+      grid.setNumber(0, 1, 2);
+
+      const clone = Grid.clone(grid);
+      assert.equal(clone.rows, grid.rows);
+      assert.equal(clone.columns, grid.columns);
+      assert.deepEqual(clone.getSquare(0, 0), grid.getSquare(0, 0));
+      assert.deepEqual(clone.getSquare(0, 1), grid.getSquare(0, 1));
+      assert.deepEqual(clone.getSquare(1, 0), grid.getSquare(1, 0));
+      assert.deepEqual(clone.getSquare(1, 1), grid.getSquare(1, 1));
+
+      // Ensure it's a deep copy (at least for the grid structure)
+      clone.setNumber(1, 1, 99);
+      assert.notEqual(clone.getSquare(1, 1).number, grid.getSquare(1, 1).number);
+    });
+  });
+
   describe("setDirection", () => {
     it("should set the direction correctly for a given row and column", () => {
       const grid = new Grid(2, 2);
