@@ -2,6 +2,8 @@ import assert from "assert";
 import {
   Direction,
   Grid,
+  isBlank,
+  isNotBlank,
   notOnEdge,
   pathIncludesCoord,
   squareFromCoords,
@@ -138,6 +140,29 @@ describe("grid", () => {
     assert.deepEqual(squareFromCoords(coords1, coords2), expected);
   });
 
+  it("should find straight line on same row in reverse", () => {
+    const coords1 = { row: 1, col: 2 };
+    const coords2 = { row: 1, col: 0 };
+    const expected = {
+      row: 1,
+      col: 2,
+      direction: Direction.UP,
+      number: 2
+    };
+    assert.deepEqual(squareFromCoords(coords1, coords2), expected);
+  });
+
+  it("should return NONE direction if start and dest are the same", () => {
+    const coords = { row: 1, col: 1 };
+    const expected = {
+      row: 1,
+      col: 1,
+      direction: Direction.NONE,
+      number: 0
+    };
+    assert.deepEqual(squareFromCoords(coords, coords), expected);
+  });
+
   it("should find straight line on same column", () => {
     const coords1 = { row: 0, col: 1 };
     const coords2 = { row: 2, col: 1 };
@@ -190,6 +215,54 @@ describe("grid", () => {
       grid.addDecorator(1, 0, "decorator2");
       assert.equal(grid.getSquare(0, 1).decorators, "decorator1");
       assert.equal(grid.getSquare(1, 0).decorators, "decorator2");
+    });
+
+    it("should append decorators if they already exist", () => {
+      const grid = new Grid(2, 2);
+      grid.addDecorator(0, 0, "first");
+      grid.addDecorator(0, 0, "second");
+      assert.equal(grid.getSquare(0, 0).decorators, "firstsecond");
+    });
+  });
+
+  describe("getSize", () => {
+    it("should return the correct size", () => {
+      const grid = new Grid(3, 4);
+      assert.deepEqual(grid.getSize(), { row: 3, col: 4 });
+    });
+  });
+
+  describe("isBlank", () => {
+    it("should return true for a blank square", () => {
+      const grid = new Grid(1, 1);
+      assert(isBlank(grid.getSquare(0, 0)));
+    });
+
+    it("should return false for a non-blank square", () => {
+      const grid = new Grid(1, 1);
+      grid.setDirection(0, 0, Direction.DOWN);
+      assert(!isBlank(grid.getSquare(0, 0)));
+    });
+  });
+
+  describe("isNotBlank", () => {
+    it("should return true for a non-blank square", () => {
+      const grid = new Grid(1, 1);
+      grid.setDirection(0, 0, Direction.DOWN);
+      assert(isNotBlank(grid.getSquare(0, 0)));
+    });
+
+    it("should return false for a blank square", () => {
+      const grid = new Grid(1, 1);
+      assert(!isNotBlank(grid.getSquare(0, 0)));
+    });
+  });
+
+  describe("setDirection errors", () => {
+    it("should throw error if overwriting existing direction", () => {
+      const grid = new Grid(2, 2);
+      grid.setDirection(0, 0, Direction.UP);
+      assert.throws(() => grid.setDirection(0, 0, Direction.DOWN), /Eek: overwriting existing direction/);
     });
   });
 
