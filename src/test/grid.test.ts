@@ -99,6 +99,40 @@ describe("grid", () => {
     assert.equal(sq.number, 3);
   });
 
+  describe("squareFromCoords", () => {
+    it("should return Direction.UP when dest is to the left on the same row", () => {
+      const start = { row: 5, col: 5 };
+      const dest = { row: 5, col: 2 };
+      const result = squareFromCoords(start, dest);
+      assert.equal(result.direction, Direction.UP);
+      assert.equal(result.number, 3);
+    });
+
+    it("should return Direction.LEFT when dest is above on the same column", () => {
+      const start = { row: 5, col: 5 };
+      const dest = { row: 2, col: 5 };
+      const result = squareFromCoords(start, dest);
+      assert.equal(result.direction, Direction.LEFT);
+      assert.equal(result.number, 3);
+    });
+
+    it("should return Direction.RIGHT when dest is below on the same column", () => {
+      const start = { row: 2, col: 5 };
+      const dest = { row: 5, col: 5 };
+      const result = squareFromCoords(start, dest);
+      assert.equal(result.direction, Direction.RIGHT);
+      assert.equal(result.number, 3);
+    });
+
+    it("should return Direction.DOWN when dest is to the right on the same row", () => {
+      const start = { row: 5, col: 2 };
+      const dest = { row: 5, col: 5 };
+      const result = squareFromCoords(start, dest);
+      assert.equal(result.direction, Direction.DOWN);
+      assert.equal(result.number, 3);
+    });
+  });
+
   it("should return the correct string representation of the grid", () => {
     const grid = new Grid(2, 2);
     grid.setDirection(0, 1, Direction.DOWN);
