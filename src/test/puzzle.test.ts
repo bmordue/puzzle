@@ -15,7 +15,7 @@ describe("puzzle", () => {
             const rows = 4;
             const cols = 4;
 
-            for (let i = 0; i < 12; i++) {
+            for (let i = 0; i < expected.length; i++) {
                 const s = startPoint(rows, cols, i);
                 assert.deepEqual(s, expected[i], `failed at index ${i}`);
             }
@@ -33,7 +33,7 @@ describe("puzzle", () => {
             const rows = 5;
             const cols = 3;
 
-            for (let i = 0; i < 12; i++) {
+            for (let i = 0; i < expected.length; i++) {
                 const s = startPoint(rows, cols, i);
                 assert.deepEqual(s, expected[i], `failed at index ${i}`);
             }
@@ -50,7 +50,7 @@ describe("puzzle", () => {
             const rows = 3;
             const cols = 3;
 
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < expected.length; i++) {
                 const s = startPoint(rows, cols, i);
                 assert.deepEqual(s, expected[i], `failed at index ${i}`);
             }
@@ -67,7 +67,7 @@ describe("puzzle", () => {
             const rows = 3;
             const cols = 5;
 
-            for (let i = 0; i < 12; i++) {
+            for (let i = 0; i < expected.length; i++) {
                 const s = startPoint(rows, cols, i);
                 assert.deepEqual(s, expected[i], `failed at index ${i}`);
             }

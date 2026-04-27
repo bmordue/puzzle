@@ -14,6 +14,14 @@ function countEdgeSquares(rows: number, columns: number) {
 }
 
 export function startPoint(rows: number, columns: number, index: number): Coord {
+    if (rows < 2 || columns < 2) {
+        throw new RangeError(`Grid must have at least 2 rows and 2 columns, got ${rows}x${columns}`);
+    }
+    const perimeter = countEdgeSquares(rows, columns);
+    if (index < 0 || index >= perimeter) {
+        throw new RangeError(`index ${index} is out of range for a ${rows}x${columns} grid (perimeter ${perimeter})`);
+    }
+
     // Left edge, top to bottom
     if (index < rows) {
         return { row: index, col: 0 };
@@ -33,12 +41,7 @@ export function startPoint(rows: number, columns: number, index: number): Coord 
     index -= (rows - 1);
 
     // Top edge, right to left
-    if (index < columns - 2) {
-        return { row: 0, col: columns - 2 - index };
-    }
-
-    // Should not be reached
-    return { row: -1, col: -1 };
+    return { row: 0, col: columns - 2 - index };
 }
 
 function randomDirection(): Direction {
