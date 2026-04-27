@@ -14,28 +14,34 @@ function countEdgeSquares(rows: number, columns: number) {
 }
 
 export function startPoint(rows: number, columns: number, index: number): Coord {
-    let x;
-    let y;
-    if (index < columns) {
-        x = index;
-        y = 0;
+    if (rows < 2 || columns < 2) {
+        throw new RangeError(`Grid must have at least 2 rows and 2 columns, got ${rows}x${columns}`);
     }
-    if (index >= columns && index < columns + rows - 1) {
-        x = columns - 1;
-        y = index - columns + 1;
-    }
-    if (index >= columns + rows - 1 && index < 2 * columns + rows - 3) {
-        x = 2 * columns + rows - 3 - index;
-        y = rows - 1;
-    }
-    if (index >= 2 * columns + rows - 3) {
-        x = 0;
-        y = 2 * columns + 2 * rows - 4 - index;
+    const perimeter = countEdgeSquares(rows, columns);
+    if (index < 0 || index >= perimeter) {
+        throw new RangeError(`index ${index} is out of range for a ${rows}x${columns} grid (perimeter ${perimeter})`);
     }
 
-    if (x == undefined) x = -1;
-    if (y == undefined) y = -1;
-    return { row: x, col: y };
+    // Left edge, top to bottom
+    if (index < rows) {
+        return { row: index, col: 0 };
+    }
+    index -= rows;
+
+    // Bottom edge, left to right
+    if (index < columns - 1) {
+        return { row: rows - 1, col: index + 1 };
+    }
+    index -= (columns - 1);
+
+    // Right edge, bottom to top
+    if (index < rows - 1) {
+        return { row: rows - 2 - index, col: columns - 1 };
+    }
+    index -= (rows - 1);
+
+    // Top edge, right to left
+    return { row: 0, col: columns - 2 - index };
 }
 
 function randomDirection(): Direction {
