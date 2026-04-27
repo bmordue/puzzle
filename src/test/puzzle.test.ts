@@ -1,6 +1,7 @@
 
 import assert from "assert";
-import { startPoint } from "../puzzle";
+import { generate, startPoint } from "../puzzle";
+import { isBlank } from "../grid";
 
 
 describe("puzzle", () => {
@@ -75,6 +76,30 @@ describe("puzzle", () => {
                 const s = startPoint(rows, cols, i);
                 assert.deepEqual(s, expected[i]);
             }
+        });
+    });
+
+    describe("generate", () => {
+        it("should generate a grid with specified dimensions", () => {
+            const rows = 5;
+            const cols = 5;
+            const grid = generate(rows, cols);
+            assert.equal(grid.rows, rows);
+            assert.equal(grid.columns, cols);
+        });
+
+        it("should have exactly one goal square (number 0)", () => {
+            const grid = generate(5, 5);
+            const squares = grid.listSquares();
+            const goalSquares = squares.filter(s => s.number === 0);
+            assert.equal(goalSquares.length, 1);
+        });
+
+        it("should fill all squares (no blank squares)", () => {
+            const grid = generate(5, 5);
+            const squares = grid.listSquares();
+            const blankSquares = squares.filter(isBlank);
+            assert.equal(blankSquares.length, 0, `Found blank squares: ${JSON.stringify(blankSquares)}`);
         });
     });
 });
