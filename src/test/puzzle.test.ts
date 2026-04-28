@@ -20,6 +20,37 @@ describe("puzzle", () => {
                 const s = startPoint(rows, cols, i);
                 assert.deepEqual(s, expected[i], `failed at index ${i}`);
             }
+        });
+
+        it("should throw RangeError for invalid grid dimensions", () => {
+            assert.throws(() => startPoint(1, 5, 0), /Grid must have at least 2 rows and 2 columns/);
+            assert.throws(() => startPoint(5, 1, 0), /Grid must have at least 2 rows and 2 columns/);
+        });
+
+        it("should throw RangeError for index out of range", () => {
+            const rows = 3;
+            const cols = 3;
+            const perimeter = 8;
+            assert.throws(() => startPoint(rows, cols, -1), /index -1 is out of range/);
+            assert.throws(() => startPoint(rows, cols, perimeter), /index 8 is out of range/);
+        });
+
+        it("should find start points for 3x2 grid", () => {
+            // rows = 3, cols = 2
+            // countEdgeSquares: 2 * 3 = 6 (since cols not > 2)
+            const expected = [
+                { row: 0, col: 0 }, { row: 1, col: 0 }, { row: 2, col: 0 },
+                { row: 2, col: 1 },
+                { row: 1, col: 1 }, { row: 0, col: 1 },
+            ];
+
+            const rows = 3;
+            const cols = 2;
+
+            for (let i = 0; i < expected.length; i++) {
+                const s = startPoint(rows, cols, i);
+                assert.deepEqual(s, expected[i], `failed at index ${i}`);
+            }
 
         });
 
