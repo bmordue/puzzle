@@ -167,8 +167,8 @@ export function generate(rows: number, columns: number) {
     let grid = new Grid(rows, columns);
 
     // pick a goal square
-    const goalRow = rnd(columns - 2) + 1; // not on edge
-    const goalCol = rnd(rows - 2) + 1; // not on edge
+    const goalRow = rnd(rows - 2) + 1; // not on edge
+    const goalCol = rnd(columns - 2) + 1; // not on edge
     grid.setNumber(goalRow, goalCol, 0);
 
 
