@@ -22,6 +22,32 @@ describe("puzzle", () => {
             }
         });
 
+        it("should find start points for 2x2 grid", () => {
+            const expected = [
+                { row: 0, col: 0 }, { row: 1, col: 0 },
+                { row: 1, col: 1 }, { row: 0, col: 1 },
+            ];
+
+            const rows = 2;
+            const cols = 2;
+
+            for (let i = 0; i < expected.length; i++) {
+                const s = startPoint(rows, cols, i);
+                assert.deepEqual(s, expected[i], `failed at index ${i}`);
+            }
+        });
+
+        it("should find start points for 100x100 grid corners", () => {
+            const rows = 100;
+            const cols = 100;
+
+            assert.deepEqual(startPoint(rows, cols, 0), { row: 0, col: 0 });
+            assert.deepEqual(startPoint(rows, cols, 99), { row: 99, col: 0 });
+            assert.deepEqual(startPoint(rows, cols, 198), { row: 99, col: 99 });
+            assert.deepEqual(startPoint(rows, cols, 297), { row: 0, col: 99 });
+            assert.deepEqual(startPoint(rows, cols, 395), { row: 0, col: 1 });
+        });
+
         it("should throw RangeError for invalid grid dimensions", () => {
             assert.throws(() => startPoint(1, 5, 0), /Grid must have at least 2 rows and 2 columns/);
             assert.throws(() => startPoint(5, 1, 0), /Grid must have at least 2 rows and 2 columns/);
