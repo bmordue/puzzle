@@ -1,8 +1,9 @@
+import assert from "assert";
 import { readFileSync } from "fs";
 import { Direction, Grid } from "./grid";
 
 
-function dirForShort(short: string): Direction {
+export function dirForShort(short: string): Direction {
     let dir = Direction.DOWN;
     switch (short) {
         case 'u':
@@ -21,7 +22,7 @@ function dirForShort(short: string): Direction {
     return dir;
 }
 
-function gridFromRaw(numbers: number[], directions: string[], rows: number, cols: number) {
+export function gridFromRaw(numbers: number[], directions: string[], rows: number, cols: number) {
     const grid = new Grid(rows, cols);
 
     for (let i = 0; i < rows; i++) {
@@ -43,6 +44,6 @@ export function exampleGrid() {
         3);
 }
 
-function gridFromFile(path: string) {
+export function gridFromFile(path: string) {
     return Grid.clone(JSON.parse(readFileSync(path, "utf8")));
 }
