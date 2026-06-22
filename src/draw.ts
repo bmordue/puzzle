@@ -6,7 +6,7 @@ export function svgGrid(grid: Grid) {
     }
 
     if (!(grid instanceof Grid)) {
-        throw new Error("Invalid grid parameter. Grid must be an instance of the Grid class.");
+        throw new TypeError("Invalid grid parameter. Grid must be an instance of the Grid class.");
     }
     const rows = grid.rows;
     const cols = grid.columns;
