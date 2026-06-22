@@ -1,5 +1,4 @@
-import assert from "assert";
-import { readFileSync } from "fs";
+import { readFileSync } from "node:fs";
 import { Direction, Grid } from "./grid";
 
 

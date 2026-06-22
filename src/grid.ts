@@ -17,7 +17,7 @@ export interface GridSquare {
 }
 
 export class Grid {
-    private grid: GridSquare[][];
+    private readonly grid: GridSquare[][];
     rows: number;
     columns: number;
 
@@ -168,7 +168,7 @@ export function squareFromCoords(start: Coord, dest: Coord): GridSquare {
 }
 
 export function pathIncludesCoord(path: Coord[], coord: Coord): boolean {
-    return path.filter((c) => c.col === coord.col && c.row === coord.row).length > 0;
+    return path.some((c) => c.col === coord.col && c.row === coord.row);
 }
 
 export function notOnEdge(grid: Grid, c: Coord): boolean {
