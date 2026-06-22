@@ -7,6 +7,9 @@ function main() {
     try {
         rows = Number.parseInt(process.argv[2]);
         cols = Number.parseInt(process.argv[3]);
+        if (Number.isNaN(rows) || Number.isNaN(cols)) {
+            throw new Error("Invalid arguments");
+        }
     } catch {
         console.log("\nUsage: node built/app.js rows cols\n");
         process.exit(1);
