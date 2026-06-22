@@ -105,7 +105,7 @@ function pathToGoalRec(grid: Grid, goal: Coord, start: Coord, targetSteps: numbe
     const next = availableMoves[nextIndex];
     currentPath.push(next);
 
-    return pathToGoalRec(grid, goal, next, targetSteps--, currentPath);
+    return pathToGoalRec(grid, goal, next, targetSteps - 1, currentPath);
 }
 
 
